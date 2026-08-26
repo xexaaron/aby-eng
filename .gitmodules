@@ -1,0 +1,6 @@
+[submodule "vendor/aby-rhi"]
+	path = vendor/aby-rhi
+	url = https://github.com/xexaaron/aby-rhi
+[submodule "vendor/aby-win"]
+	path = vendor/aby-win
+	url = https://github.com/xexaaron/aby-win
