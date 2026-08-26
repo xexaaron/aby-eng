@@ -11,5 +11,22 @@ set(VENDOR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor)
 
 add_subdirectory(${VENDOR_DIR}/aby-rhi)
 add_subdirectory(${VENDOR_DIR}/aby-win)
+
+set_target_properties(aby-win PROPERTIES
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+)
+
+set_target_properties(glfw PROPERTIES
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+)
+
+set_target_properties(SDL3-static PROPERTIES
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+)
+
+set_target_properties(aby-win-test PROPERTIES
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+)
+
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/aby-eng)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sandbox)

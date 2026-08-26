@@ -23,4 +23,6 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Werror>
 )
 
-add_dependencies(${PROJECT_NAME} aby-eng)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+)
