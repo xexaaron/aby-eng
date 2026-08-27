@@ -43,9 +43,11 @@ namespace aby::eng {
 	using i32 = int32_t;
 	using i64 = int64_t;
 
+	using uchar = unsigned char;
 	using usize = size_t;
 	using uptr  = uintptr_t;
 	using iptr  = intptr_t;
+	using byte  = uchar;
 
 	template <typename T>
 	using ref = std::shared_ptr<T>;

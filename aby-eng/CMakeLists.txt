@@ -11,9 +11,11 @@ add_library(${PROJECT_NAME} SHARED
     include/aby-eng/common.hpp
     include/aby-eng/log.hpp
     include/aby-eng/core/app.hpp
+    include/aby-eng/core/entry.hpp
     src/common.cpp
     src/log.cpp
     src/core/app.cpp
+    src/core/entry.cpp
 )
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

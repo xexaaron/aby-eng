@@ -1,5 +1,5 @@
 #include "core/app.hpp"
-
+#include "core/entry.hpp"
 #include "log.hpp"
 
 #include <aby-win/common.hpp>
@@ -72,23 +72,6 @@ namespace aby::eng {
 	static std::unique_ptr<App> s_App;
 
 	auto App::init(const AppInfo& info) -> bool {
-		Logger::get(ELogger::client)
-		    ->set_level_info(ELogLevel::log, { .color = "\033[1;32m", .prefix = "| LOG |", .stream = &std::cout })
-		    ->set_level_info(ELogLevel::warn, { .color = "\033[33m", .prefix = "| WRN |", .stream = &std::cout })
-		    ->set_level_info(ELogLevel::err, { .color = "\033[31m", .prefix = "| ERR |", .stream = &std::cerr })
-		    ->set_timestamp(true);
-		Logger::get(ELogger::internal)
-		    ->set_level_info(ELogLevel::trace, { .color = "\033[1;30m", .prefix = "| TRC |", .stream = &std::cout })
-		    ->set_level_info(ELogLevel::todo, { .color = "\033[38;2;255;182;193m", .prefix = "| TDO |", .stream = &std::cout })
-		    ->set_level_info(ELogLevel::log, { .color = "\033[1;32m", .prefix = "| LOG |", .stream = &std::cout })
-		    ->set_level_info(ELogLevel::warn, { .color = "\033[33m", .prefix = "| WRN |", .stream = &std::cout })
-		    ->set_level_info(ELogLevel::err, { .color = "\033[31m", .prefix = "| ERR |", .stream = &std::cerr })
-		    ->set_level_info(ELogLevel::ast, { .color = "\033[31m", .prefix = "| AST |", .stream = &std::cerr })
-		    ->set_level_info(ELogLevel::dev, { .color = "\033[1;36m", .prefix = "| DEV |", .stream = &std::cout })
-		    ->set_timestamp(true);
-
-		Logger::run();
-
 		win::ILogger::set<WINLoggerInterface>();
 
 		s_App.reset(new App(info));
@@ -145,6 +128,8 @@ namespace aby::eng {
 		win::Window& window = *m_Window.get();
 		auto* renderer      = m_Context->renderer();
 
+		EntryPoint::get()->on_exec(*this);
+
 		renderer->set_clear_color(rhi::Color(0.15f, 0.15f, 0.15f, 1.f));
 
 		while (!window.should_close()) {
@@ -160,6 +145,8 @@ namespace aby::eng {
 
 			renderer->on_end();
 		}
+
+		EntryPoint::get()->on_exit();
 	}
 
 } // namespace aby::eng

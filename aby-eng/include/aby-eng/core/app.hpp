@@ -9,7 +9,7 @@ namespace aby::eng {
 
 	struct AppInfo {
 		std::string name = "";
-		int argc         = 0;
+		i32 argc         = 0;
 		char** argv      = nullptr;
 	};
 
