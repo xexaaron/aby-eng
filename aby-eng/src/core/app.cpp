@@ -1,8 +1,11 @@
 #include "core/app.hpp"
+
 #include "core/entry.hpp"
+#include "core/renderer.hpp"
 #include "log.hpp"
 
 #include <aby-win/common.hpp>
+
 namespace aby::eng {
 
 	class RHILoggerInterface : public rhi::ILogger {
@@ -69,22 +72,8 @@ namespace aby::eng {
 
 namespace aby::eng {
 
-	static std::unique_ptr<App> s_App;
-
 	auto App::init(const AppInfo& info) -> bool {
 		win::ILogger::set<WINLoggerInterface>();
-
-		s_App.reset(new App(info));
-		return s_App != nullptr;
-	}
-
-	auto App::get() -> App& {
-		return *s_App.get();
-	}
-
-	App::App(const AppInfo& info) :
-	    m_Window(nullptr),
-	    m_Context(nullptr) {
 		win::Config window_cfg;
 
 		window_cfg.set_name(info.name)
@@ -110,15 +99,23 @@ namespace aby::eng {
 		m_Context->set_interface<RHILoggerInterface>();
 		if (!m_Context->init(ctx_cfg)) {
 			log_err("[eng] failed to initialize render context");
-			return;
+			return false;
 		}
 
 		expect(info.argv, "[eng] app info 'argv' was not set");
 		m_Context->file_io()->set_cwd(fs::path(info.argv[0]).parent_path());
 		m_Context->file_io()->set_cache_dir(m_Context->file_io()->cwd() / "cache");
+
+		if (!Renderer2D::init()) {
+			log_err("[eng] failed to initialzie app renderer");
+			return false;
+		}
+
+		return true;
 	}
 
-	App::~App() {
+	auto App::deinit() -> void {
+		Renderer2D::deinit();
 		m_Context->deinit();
 		m_Window.release();
 		Logger::shutdown();
@@ -128,7 +125,7 @@ namespace aby::eng {
 		win::Window& window = *m_Window.get();
 		auto* renderer      = m_Context->renderer();
 
-		EntryPoint::get()->on_exec(*this);
+		EntryPoint::get()->on_exec();
 
 		renderer->set_clear_color(rhi::Color(0.15f, 0.15f, 0.15f, 1.f));
 
@@ -139,14 +136,21 @@ namespace aby::eng {
 				break;
 			}
 
-			if (!renderer->on_begin()) {
+			if (!Renderer2D::begin_frame()) {
+				log_wrn("[eng] failed to begin frame");
 				continue;
 			}
 
-			renderer->on_end();
+			Renderer2D::render();
+
+			Renderer2D::end_frame();
 		}
 
 		EntryPoint::get()->on_exit();
+	}
+
+	auto App::window() -> win::Window* {
+		return m_Window.get();
 	}
 
 } // namespace aby::eng

@@ -4,3 +4,6 @@
 [submodule "vendor/aby-win"]
 	path = vendor/aby-win
 	url = https://github.com/xexaaron/aby-win
+[submodule "vendor/glm"]
+	path = vendor/glm
+	url = https://github.com/g-truc/glm

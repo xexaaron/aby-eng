@@ -12,6 +12,9 @@ set(VENDOR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor)
 add_subdirectory(${VENDOR_DIR}/aby-rhi)
 add_subdirectory(${VENDOR_DIR}/aby-win)
 
+set(GLM_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+add_subdirectory(${VENDOR_DIR}/glm)
+
 set_target_properties(aby-win PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
@@ -25,6 +28,10 @@ set_target_properties(SDL3-static PROPERTIES
 )
 
 set_target_properties(aby-win-test PROPERTIES
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+)
+
+set_target_properties(glm PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
 

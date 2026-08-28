@@ -15,16 +15,17 @@ namespace aby::eng {
 
 	class ABY_API App {
 	public:
-		static auto init(const AppInfo& info) -> bool;
-		static auto get() -> App&;
-		~App();
-
-		auto run() -> void;
+		static auto run() -> void;
+		static auto window() -> win::Window*;
 	protected:
 		App(const AppInfo& info);
 	private:
-		unique<win::Window> m_Window;
-		rhi::Context* m_Context;
+		static auto init(const AppInfo& info) -> bool;
+		static auto deinit() -> void;
+		friend class EntryPoint;
+	private:
+		static inline unique<win::Window> m_Window = nullptr;
+		static inline rhi::Context* m_Context      = nullptr;
 	};
 
 } // namespace aby::eng

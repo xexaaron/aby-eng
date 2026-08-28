@@ -6,6 +6,10 @@
 #	include <crtdbg.h>
 #endif
 
+#ifdef _WIN32
+#	include <Windows.h>
+#endif
+
 namespace aby::eng {
 
 	auto EntryPoint::get() -> ref<EntryPoint> {
@@ -17,6 +21,13 @@ namespace aby::eng {
 		_CrtSetDbgFlag(
 		    _CRTDBG_ALLOC_MEM_DF |
 		    _CRTDBG_LEAK_CHECK_DF);
+#endif
+#ifdef _WIN32
+		auto win32_exc_filter = [](EXCEPTION_POINTERS* info) -> LONG {
+			Logger::shutdown(); // flush the multithreaded logger so that we get err's and asserts before exiting
+			return EXCEPTION_EXECUTE_HANDLER;
+		};
+		SetUnhandledExceptionFilter(win32_exc_filter);
 #endif
 		Logger::get(ELogger::client)
 		    ->set_level_info(ELogLevel::log, { .color = "\033[1;32m", .prefix = "| LOG |", .stream = &std::cout })
@@ -41,14 +52,16 @@ namespace aby::eng {
 			return 1;
 		}
 
-		auto app_info = entry_point->init();
+		auto& app_info = entry_point->init();
 
 		if (!App::init(app_info)) {
 			log_err("[eng] failed to initialize the app");
+			return 1;
 		}
 
-		auto& app = App::get();
-		app.run();
+		App::run();
+
+		App::deinit();
 
 		return 0;
 	}
