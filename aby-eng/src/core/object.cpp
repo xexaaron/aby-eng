@@ -5,7 +5,7 @@ namespace aby::eng {
 	auto Object::on_create() -> void {
 	}
 
-	auto Object::on_tick(float deltatime) -> void {
+	auto Object::on_tick(const Time& deltatime) -> void {
 	}
 
 	auto Object::on_render() -> void {
@@ -19,7 +19,7 @@ namespace aby::eng {
 	}
 
 	auto Object::uuid() const -> UUID {
-        return m_ID;
-    }
+		return m_ID;
+	}
 
 } // namespace aby::eng

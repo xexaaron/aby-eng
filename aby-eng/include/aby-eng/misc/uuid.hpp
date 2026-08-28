@@ -6,7 +6,7 @@
 
 namespace aby::eng {
 
-	class UUID {
+	class ABY_API UUID {
 	public:
 		/// @brief Generate a valid uuid
 		UUID();

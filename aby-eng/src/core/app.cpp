@@ -5,6 +5,7 @@
 #include "log.hpp"
 
 #include <aby-win/common.hpp>
+#include <chrono>
 
 namespace aby::eng {
 
@@ -111,6 +112,13 @@ namespace aby::eng {
 			return false;
 		}
 
+		m_Window->add_listener([](win::Event& event) -> bool {
+			for (auto& object : m_Objects) {
+				object->on_event(event);
+			}
+			return false;
+		});
+
 		return true;
 	}
 
@@ -127,7 +135,16 @@ namespace aby::eng {
 
 		EntryPoint::get()->on_exec();
 
+		for (auto& object : m_Objects) {
+			object->on_create();
+		}
+
+		m_State = EAppState::running;
+
 		renderer->set_clear_color(rhi::Color(0.15f, 0.15f, 0.15f, 1.f));
+
+		using clock     = std::chrono::steady_clock;
+		auto last_frame = clock::now();
 
 		while (!window.should_close()) {
 			window.poll();
@@ -136,9 +153,21 @@ namespace aby::eng {
 				break;
 			}
 
+			const auto now = clock::now();
+			const Time deltatime(std::chrono::duration_cast<std::chrono::nanoseconds>(now - last_frame));
+			last_frame = now;
+
+			for (auto& object : m_Objects) {
+				object->on_tick(deltatime);
+			}
+
 			if (!Renderer2D::begin_frame()) {
 				log_wrn("[eng] failed to begin frame");
 				continue;
+			}
+
+			for (auto& object : m_Objects) {
+				object->on_render();
 			}
 
 			Renderer2D::render();
@@ -146,11 +175,26 @@ namespace aby::eng {
 			Renderer2D::end_frame();
 		}
 
+		m_State = EAppState::deinit;
+
+		for (auto& object : m_Objects) {
+			object->on_destroy();
+		}
+
 		EntryPoint::get()->on_exit();
 	}
 
 	auto App::window() -> win::Window* {
 		return m_Window.get();
+	}
+
+	auto App::add_obj(ref<Object> object) -> void {
+		expect(m_State != EAppState::deinit, "cannot add an object to the application during deinitalization");
+		/// Objects have already been initialized but if we add one at runtime it needs to be created.
+		if (m_State == EAppState::running) {
+			object->on_create();
+		}
+		m_Objects.push_back(object);
 	}
 
 } // namespace aby::eng

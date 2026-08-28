@@ -1,12 +1,15 @@
 #pragma once
-#include "core/app.hpp"
+#include "misc/time.hpp"
 #include "misc/uuid.hpp"
+
+#include <aby-win/event.hpp>
+
 namespace aby::eng {
 
-	class Object {
+	class ABY_API Object {
 	public:
 		virtual auto on_create() -> void;
-		virtual auto on_tick(float deltatime) -> void;
+		virtual auto on_tick(const Time& deltatime) -> void;
 		virtual auto on_render() -> void;
 		virtual auto on_event(win::Event& event) -> bool;
 		virtual auto on_destroy() -> void;

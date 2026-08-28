@@ -18,6 +18,8 @@ add_library(${PROJECT_NAME} SHARED
     
     include/aby-eng/misc/types.hpp
     include/aby-eng/misc/uuid.hpp
+    include/aby-eng/misc/time.hpp
+    
 
     src/common.cpp
     src/log.cpp
@@ -29,6 +31,7 @@ add_library(${PROJECT_NAME} SHARED
     
     src/misc/types.cpp
     src/misc/uuid.cpp
+    src/misc/time.cpp
 )
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

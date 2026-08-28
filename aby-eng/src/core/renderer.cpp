@@ -90,12 +90,12 @@ namespace aby::eng {
 	}
 
 	auto Renderer2D::begin_frame() -> bool {
+		m_Indices->clear();
+		m_Vertices->clear();
+
 		if (!m_Renderer->on_begin()) {
 			return false;
 		}
-
-		m_Vertices->upload();
-		m_Indices->upload();
 
 		return true;
 	}
@@ -103,6 +103,10 @@ namespace aby::eng {
 	auto Renderer2D::render() -> void {
 		auto [w, h]     = App::window()->size();
 		auto projection = create_2d_projection(w, h);
+
+		m_Vertices->upload();
+		m_Indices->upload();
+
 		m_Pass->push_constant("projection", projection);
 
 		if (m_Vertices->count() > 0) {
@@ -112,8 +116,6 @@ namespace aby::eng {
 	}
 
 	auto Renderer2D::end_frame() -> bool {
-		// m_Indices->clear();
-		// m_Vertices->clear();
 		return m_Renderer->on_end();
 	}
 
