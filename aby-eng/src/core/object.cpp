@@ -22,4 +22,8 @@ namespace aby::eng {
 		return m_ID;
 	}
 
+	auto Object::operator==(Object& other) -> bool {
+		return m_ID == other.m_ID;
+	}
+
 } // namespace aby::eng

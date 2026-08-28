@@ -1,6 +1,8 @@
 #include <aby-eng/core/app.hpp>
 #include <aby-eng/core/entry.hpp>
 #include <aby-eng/core/renderer.hpp>
+#include <aby-eng/ui/containers/canvas.hpp>
+#include <aby-eng/ui/containers/container.hpp>
 
 namespace aby::eng::sandbox {
 
@@ -51,6 +53,18 @@ namespace aby::eng::sandbox {
 		}
 
 		auto on_exec() -> void {
+			auto canvas = std::make_shared<ui::Canvas>(glm::fvec4{ 1.f, 0.f, 0.f, 0.25f });
+
+			auto container = std::make_shared<ui::Container>(
+			    Transform2D({ 0, 0 },
+			                { 300, 300 }, 1.f),
+			    15.f,
+			    ui::Border(2.f, glm::fvec4{ 0.f, 1.f, 0.f, 1.f }),
+			    ui::EStretch::fill);
+
+			canvas->add_child(container);
+
+			App::add_obj(canvas);
 			App::add_obj(std::make_shared<TestObject>());
 		}
 

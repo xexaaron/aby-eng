@@ -10,9 +10,9 @@ namespace aby::eng {
 	struct ABY_API Transform2D {
 		Transform2D(glm::fvec2 pos, glm::fvec2 size, float scale = 1.f);
 
-		glm::fvec2 pos  = { 0.f, 0.f };
-		glm::fvec2 size = { 0.f, 0.f };
-		float scale     = 1.f;
+		glm::fvec2 pos   = { 0.f, 0.f };
+		glm::fvec2 size  = { 0.f, 0.f };
+		glm::fvec2 scale = { 1.f, 1.f };
 	};
 
 	struct ABY_API Material2D {
@@ -24,6 +24,13 @@ namespace aby::eng {
 		glm::fvec4 color = { 1.f, 1.f, 1.f, 1.f };
 		uint32_t texture = 0;                      // texture handle
 		glm::fvec4 uv    = { 0.f, 0.f, 0.f, 0.f }; // min, max
+	};
+
+	struct ABY_API Rect2D {
+		Rect2D(glm::fvec2 pos = { 0.f, 0.f }, glm::fvec2 size = { 0.f, 0.f });
+
+		glm::fvec2 pos  = { 0.f, 0.f };
+		glm::fvec2 size = { 0.f, 0.f };
 	};
 
 } // namespace aby::eng

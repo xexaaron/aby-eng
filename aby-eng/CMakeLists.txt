@@ -20,6 +20,9 @@ add_library(${PROJECT_NAME} SHARED
     include/aby-eng/misc/uuid.hpp
     include/aby-eng/misc/time.hpp
     
+    include/aby-eng/ui/element.hpp
+    include/aby-eng/ui/containers/canvas.hpp
+    include/aby-eng/ui/containers/container.hpp
 
     src/common.cpp
     src/log.cpp
@@ -32,6 +35,11 @@ add_library(${PROJECT_NAME} SHARED
     src/misc/types.cpp
     src/misc/uuid.cpp
     src/misc/time.cpp
+
+    src/ui/element.cpp
+    src/ui/containers/canvas.cpp
+    src/ui/containers/container.cpp
+
 )
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

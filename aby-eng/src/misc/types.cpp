@@ -1,5 +1,4 @@
 #include "misc/types.hpp"
-
 namespace aby::eng {
 
 	Transform2D::Transform2D(glm::fvec2 pos, glm::fvec2 size, float scale) :
@@ -30,6 +29,11 @@ namespace aby::eng {
 	    color{ 1.f, 1.f, 1.f, 1.f },
 	    texture(texture),
 	    uv(uv) {
+	}
+
+	Rect2D::Rect2D(glm::fvec2 pos, glm::fvec2 size) :
+	    pos(pos),
+	    size(size) {
 	}
 
 } // namespace aby::eng
