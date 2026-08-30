@@ -3,11 +3,13 @@
 namespace aby::eng::ui {
 
 	Element::Element() :
-	    m_Transform({ 0.f, 0.f }, { 0.f, 0.f }, 1.f) {
+	    m_Transform({ 0.f, 0.f }, { 0.f, 0.f }, 1.f),
+	    m_ResolvedLayout({ 0.f, 0.f }, { 0.f, 0.f }) {
 	}
 
 	Element::Element(const Transform2D& transform) :
-	    m_Transform(transform) {
+	    m_Transform(transform),
+	    m_ResolvedLayout(transform.pos, transform.size) {
 	}
 
 	auto Element::on_create() -> void {

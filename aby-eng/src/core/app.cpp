@@ -108,7 +108,7 @@ namespace aby::eng {
 		m_Context->file_io()->set_cache_dir(m_Context->file_io()->cwd() / "cache");
 
 		if (!Renderer2D::init()) {
-			log_err("[eng] failed to initialzie app renderer");
+			log_err("[eng] failed to initialize app renderer");
 			return false;
 		}
 
@@ -156,6 +156,11 @@ namespace aby::eng {
 			const auto now = clock::now();
 			const Time deltatime(std::chrono::duration_cast<std::chrono::nanoseconds>(now - last_frame));
 			last_frame = now;
+
+			auto [w, h] = window.size();
+			if (window.minimized() || w == 0 || h == 0) {
+				continue;
+			}
 
 			for (auto& object : m_Objects) {
 				object->on_tick(deltatime);

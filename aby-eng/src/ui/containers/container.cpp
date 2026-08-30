@@ -4,58 +4,101 @@
 
 namespace aby::eng::ui {
 
-	Container::Container(Transform2D transform, float padding, const Border& border, EStretch stretch) :
+	Container::Container(Transform2D transform, ELayout layout, EDirection direction, float spacing, float padding, const Border& border, EStretch stretch) :
 	    Element(transform),
+	    m_Layout(layout),
+	    m_Direction(direction),
+	    m_Spacing(spacing),
 	    m_Padding(padding),
 	    m_Border(border),
 	    m_Stretch(stretch) {
 	}
 
+	auto Container::create(Transform2D transform, ELayout layout, EDirection direction, float spacing, float padding, const Border& border, EStretch stretch) -> ref<Container> {
+		return std::make_shared<Container>(transform, layout, direction, spacing, padding, border, stretch);
+	}
+
 	auto Container::on_tick(const Time& deltatime) -> void {
-		Rect2D rect = available_rect();
+		const Rect2D rect    = available_rect();
+		const auto& children = this->children();
 
-		for (auto& child : this->children()) {
-			const auto& child_size = child->transform().size;
+		if (children.empty()) {
+			Element::on_tick(deltatime);
+			return;
+		}
 
-			if (child_size.x <= 0.f || child_size.y <= 0.f) {
-				child->set_resolved_layout(Rect2D(rect.pos, { 0.f, 0.f }));
+		const bool horizontal         = m_Layout == ELayout::horizontal;
+		const float primary_size      = horizontal ? rect.size.x : rect.size.y;
+		const float cross_size        = horizontal ? rect.size.y : rect.size.x;
+		const float total_spacing     = m_Spacing * static_cast<float>(children.size() - 1);
+		const float available_primary = std::max(0.f, primary_size - total_spacing);
+		const float child_primary     = available_primary / static_cast<float>(children.size());
+		float cursor                  = m_Direction == EDirection::forward ? 0.f : primary_size;
+
+		for (auto& child : children) {
+			if (!child)
 				continue;
+
+			glm::fvec2 slot_size;
+
+			if (horizontal) {
+				slot_size = {
+					child_primary,
+					cross_size
+				};
+			} else {
+				slot_size = {
+					cross_size,
+					child_primary
+				};
 			}
 
-			switch (m_Stretch) {
-				case EStretch::fill: {
-					child->set_resolved_layout(rect);
-					break;
-				}
-				case EStretch::fit: {
-					const float scale     = std::min(rect.size.x / child_size.x, rect.size.y / child_size.y);
-					const glm::fvec2 size = child_size * scale;
-					const glm::fvec2 pos  = {
-						rect.pos.x + (rect.size.x - size.x) * 0.5f,
-						rect.pos.y + (rect.size.y - size.y) * 0.5f
+			glm::fvec2 slot_pos;
+
+			if (m_Direction == EDirection::forward) {
+				if (horizontal) {
+					slot_pos = {
+						rect.pos.x + cursor,
+						rect.pos.y
 					};
-					child->set_resolved_layout(Rect2D(pos, size));
-					break;
-				}
-				case EStretch::cover: {
-					const float scale     = std::max(rect.size.x / child_size.x, rect.size.y / child_size.y);
-					const glm::fvec2 size = child_size * scale;
-					const glm::fvec2 pos  = {
-						rect.pos.x + (rect.size.x - size.x) * 0.5f,
-						rect.pos.y + (rect.size.y - size.y) * 0.5f
+				} else {
+					slot_pos = {
+						rect.pos.x,
+						rect.pos.y + cursor
 					};
-					child->set_resolved_layout(Rect2D(pos, size));
-					break;
 				}
+
+				cursor += child_primary + m_Spacing;
+			} else {
+				cursor -= child_primary;
+
+				if (horizontal) {
+					slot_pos = {
+						rect.pos.x + cursor,
+						rect.pos.y
+					};
+				} else {
+					slot_pos = {
+						rect.pos.x,
+						rect.pos.y + cursor
+					};
+				}
+
+				cursor -= m_Spacing;
 			}
+
+			const Rect2D slot(slot_pos, slot_size);
+
+			child->set_resolved_layout(resolve_child_layout(*child, slot));
 		}
 
 		Element::on_tick(deltatime);
 	}
 
 	auto Container::on_render() -> void {
-		const auto& pos  = m_Transform.pos;
-		const auto& size = m_Transform.size;
+		const auto rect  = resolved_layout();
+		const auto& pos  = rect.pos;
+		const auto& size = rect.size;
 
 		Material2D mat(m_Border.color);
 
@@ -131,9 +174,14 @@ namespace aby::eng::ui {
 		m_Padding = padding;
 	}
 
+	auto Container::set_spacing(float spacing) -> void {
+		m_Spacing = spacing;
+	}
+
 	auto Container::available_rect() const -> Rect2D {
-		auto pos  = m_Transform.pos + glm::fvec2(m_Padding);
-		auto size = m_Transform.size - glm::fvec2(m_Padding * 2.f);
+		const auto& rect = resolved_layout();
+		const auto pos   = rect.pos + glm::fvec2(m_Padding);
+		const auto size  = rect.size - glm::fvec2(m_Padding * 2.f);
 		return Rect2D(pos, size);
 	}
 
@@ -149,31 +197,72 @@ namespace aby::eng::ui {
 		return m_Padding;
 	}
 
+	auto Container::spacing() const -> float {
+		return m_Spacing;
+	}
+
+	auto Container::resolve_child_layout(const Element& child, const Rect2D& rect) const -> Rect2D {
+		switch (m_Stretch) {
+			case EStretch::fill: {
+				return rect;
+			}
+			case EStretch::fit: {
+				const auto requested = child.transform().size;
+
+				const float sx = rect.size.x / requested.x;
+				const float sy = rect.size.y / requested.y;
+
+				const float scale = std::min(sx, sy);
+
+				const glm::fvec2 size = requested * scale;
+
+				const glm::fvec2 pos = {
+					rect.pos.x + (rect.size.x - size.x) * 0.5f,
+					rect.pos.y + (rect.size.y - size.y) * 0.5f
+				};
+
+				return Rect2D(pos, size);
+			}
+			case EStretch::cover: {
+				const auto requested = child.transform().size;
+
+				const float sx = rect.size.x / requested.x;
+				const float sy = rect.size.y / requested.y;
+
+				const float scale = std::max(sx, sy);
+
+				const glm::fvec2 size = requested * scale;
+
+				const glm::fvec2 pos = {
+					rect.pos.x + (rect.size.x - size.x) * 0.5f,
+					rect.pos.y + (rect.size.y - size.y) * 0.5f
+				};
+
+				return Rect2D(pos, size);
+			}
+		}
+
+		return Rect2D();
+	}
+
 } // namespace aby::eng::ui
 
 namespace aby::eng::ui {
 
-	Border::Border(float scalar, glm::fvec4 color) :
-	    top(scalar),
-	    right(scalar),
-	    bottom(scalar),
-	    left(scalar),
-	    color(color) {
+	HContainer::HContainer(Transform2D transform, EDirection direction, float spacing, float padding, const Border& border, EStretch stretch) :
+	    Container(transform, ELayout::horizontal, direction, spacing, padding, border, stretch) {
 	}
 
-	Border::Border(float top, float right, float bottom, float left, glm::fvec4 color) :
-	    top(top),
-	    right(right),
-	    bottom(bottom),
-	    left(left),
-	    color(color) {
+	auto HContainer::create(Transform2D transform, EDirection direction, float spacing, float padding, const Border& border, EStretch stretch) -> ref<HContainer> {
+		return std::make_shared<HContainer>(transform, direction, spacing, padding, border, stretch);
 	}
 
-	auto Border::set_scalar(float scalar) -> void {
-		this->top    = scalar;
-		this->right  = scalar;
-		this->bottom = scalar;
-		this->left   = scalar;
+	VContainer::VContainer(Transform2D transform, EDirection direction, float spacing, float padding, const Border& border, EStretch stretch) :
+	    Container(transform, ELayout::vertical, direction, spacing, padding, border, stretch) {
+	}
+
+	auto VContainer::create(Transform2D transform, EDirection direction, float spacing, float padding, const Border& border, EStretch stretch) -> ref<VContainer> {
+		return std::make_shared<VContainer>(transform, direction, spacing, padding, border, stretch);
 	}
 
 } // namespace aby::eng::ui

@@ -8,6 +8,8 @@ namespace aby::eng::ui {
 		Canvas();
 		Canvas(const glm::fvec4& color);
 
+		static auto create(const glm::fvec4& color) -> ref<Canvas>;
+
 		auto on_render() -> void override;
 		auto on_event(win::Event& event) -> bool override;
 

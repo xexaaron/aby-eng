@@ -63,7 +63,6 @@ namespace aby::eng::ui {
 	protected:
 		Transform2D m_Transform;
 		Rect2D m_ResolvedLayout;
-	private:
 		std::vector<ref<Element>> m_Children;
 	};
 

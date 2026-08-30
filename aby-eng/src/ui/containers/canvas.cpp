@@ -5,6 +5,10 @@
 
 namespace aby::eng::ui {
 
+	auto Canvas::create(const glm::fvec4& color) -> ref<Canvas> {
+		return std::make_shared<Canvas>(color);
+	}
+
 	Canvas::Canvas() :
 	    Element(eng::Transform2D({ 0, 0 }, { App::window()->width(), App::window()->height() }, 1.f)) {
 	}

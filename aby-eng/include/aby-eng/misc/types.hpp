@@ -34,3 +34,57 @@ namespace aby::eng {
 	};
 
 } // namespace aby::eng
+
+namespace std {
+
+	template <>
+	struct formatter<aby::eng::Transform2D, char> {
+		template <class ParseContext>
+		constexpr ParseContext::iterator parse(ParseContext& ctx) {
+			auto it = ctx.begin();
+			if (it != ctx.end() && *it != '}')
+				throw format_error("invalid format");
+			return it;
+		}
+
+		template <class FmtContext>
+		FmtContext::iterator format(const aby::eng::Transform2D& t, FmtContext& ctx) const {
+			return format_to(ctx.out(), "(x: {}, y: {}), (w: {}, h: {}), (sx: {}, sy: {})",
+			                 t.pos.x, t.pos.y, t.size.x, t.size.y, t.scale.x, t.scale.y);
+		}
+	};
+
+	template <>
+	struct formatter<aby::eng::Material2D, char> {
+		template <class ParseContext>
+		constexpr ParseContext::iterator parse(ParseContext& ctx) {
+			auto it = ctx.begin();
+			if (it != ctx.end() && *it != '}')
+				throw format_error("invalid format");
+			return it;
+		}
+
+		template <class FmtContext>
+		FmtContext::iterator format(const aby::eng::Material2D& m, FmtContext& ctx) const {
+			return format_to(ctx.out(), "(r: {}, g: {}, b: {}, a: {}), (tex: {}, u: {}, v: {})",
+			                 m.color.r, m.color.g, m.color.b, m.color.a, m.texture, m.uv.x, m.uv.y);
+		}
+	};
+
+	template <>
+	struct formatter<aby::eng::Rect2D, char> {
+		template <class ParseContext>
+		constexpr ParseContext::iterator parse(ParseContext& ctx) {
+			auto it = ctx.begin();
+			if (it != ctx.end() && *it != '}')
+				throw format_error("invalid format");
+			return it;
+		}
+
+		template <class FmtContext>
+		FmtContext::iterator format(const aby::eng::Rect2D& r, FmtContext& ctx) const {
+			return format_to(ctx.out(), "(x: {}, y: {}), (w: {}, h: {})", r.pos.x, r.pos.y, r.size.x, r.size.y);
+		}
+	};
+
+} // namespace std
