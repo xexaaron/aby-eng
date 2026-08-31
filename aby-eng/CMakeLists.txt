@@ -22,9 +22,12 @@ add_library(${PROJECT_NAME} SHARED
     
     include/aby-eng/ui/element.hpp
     include/aby-eng/ui/uitypes.hpp
+    include/aby-eng/ui/image.hpp
+    include/aby-eng/ui/button.hpp
     include/aby-eng/ui/containers/canvas.hpp
     include/aby-eng/ui/containers/container.hpp
     include/aby-eng/ui/containers/grid.hpp
+    include/aby-eng/ui/containers/aspectratiobox.hpp
 
 
     src/common.cpp
@@ -41,9 +44,13 @@ add_library(${PROJECT_NAME} SHARED
 
     src/ui/element.cpp
     src/ui/uitypes.cpp
+    src/ui/image.cpp
+    src/ui/button.cpp
     src/ui/containers/canvas.cpp
     src/ui/containers/container.cpp
     src/ui/containers/grid.cpp
+    src/ui/containers/aspectratiobox.cpp
+
 )
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
@@ -90,6 +97,10 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_CURRENT_SOURCE_DIR}/resource/default_texture.png
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/default_texture.png
+
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_SOURCE_DIR}/resource/Cobblestone.png
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Cobblestone.png
 
     COMMENT "[aby:eng] Copying resources"
 )

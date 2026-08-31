@@ -4,6 +4,7 @@
 
 namespace aby::eng::ui {
 
+	/// @brief Generic container class
 	class ABY_API Container : public Element {
 	public:
 		/**
@@ -19,7 +20,7 @@ namespace aby::eng::ui {
 		Container(Transform2D transform, ELayout layout,
 		          EDirection direction = EDirection::forward,
 		          float spacing = 0.f, float padding = 0.f,
-		          const Border& border = {}, EStretch stretch = EStretch::fill);
+		          const Border& border = Border(), EStretch stretch = EStretch::fill);
 
 		/**
 		 * @brief Generic Container creation function
@@ -34,7 +35,7 @@ namespace aby::eng::ui {
 		static auto create(Transform2D transform, ELayout layout,
 		                   EDirection direction = EDirection::forward,
 		                   float spacing = 0.f, float padding = 0.f,
-		                   const Border& border = {}, EStretch stretch = EStretch::fill) -> ref<Container>;
+		                   const Border& border = Border(), EStretch stretch = EStretch::fill) -> ref<Container>;
 
 		auto on_tick(const Time& deltatime) -> void override;
 		auto on_render() -> void override;
@@ -62,7 +63,8 @@ namespace aby::eng::ui {
 		EStretch m_Stretch;
 	};
 
-	class HContainer : public Container {
+	/// @brief Horizontal container class
+	class ABY_API HContainer : public Container {
 	public:
 		/**
 		 * @brief Horizontal Container constructor
@@ -75,7 +77,7 @@ namespace aby::eng::ui {
 		 */
 		HContainer(Transform2D transform, EDirection direction = EDirection::forward,
 		           float spacing = 0.f, float padding = 0.f,
-		           const Border& border = {}, EStretch stretch = EStretch::fill);
+		           const Border& border = Border(), EStretch stretch = EStretch::fill);
 		/**
 		 * @brief Horizontal Container creation function
 		 * @param transform location, size, & scale
@@ -87,11 +89,12 @@ namespace aby::eng::ui {
 		 */
 		static auto create(Transform2D transform, EDirection direction = EDirection::forward,
 		                   float spacing = 0.f, float padding = 0.f,
-		                   const Border& border = {}, EStretch stretch = EStretch::fill) -> ref<HContainer>;
+		                   const Border& border = Border(), EStretch stretch = EStretch::fill) -> ref<HContainer>;
 	private:
 	};
 
-	class VContainer : public Container {
+	/// @brief Vertical container class
+	class ABY_API VContainer : public Container {
 	public:
 		/**
 		 * @brief Vertical Container constructor
@@ -104,7 +107,7 @@ namespace aby::eng::ui {
 		 */
 		VContainer(Transform2D transform, EDirection direction = EDirection::forward,
 		           float spacing = 0.f, float padding = 0.f,
-		           const Border& border = {}, EStretch stretch = EStretch::fill);
+		           const Border& border = Border(), EStretch stretch = EStretch::fill);
 		/**
 		 * @brief Vertical Container creation function
 		 * @param transform location, size, & scale
@@ -116,7 +119,7 @@ namespace aby::eng::ui {
 		 */
 		static auto create(Transform2D transform, EDirection direction = EDirection::forward,
 		                   float spacing = 0.f, float padding = 0.f,
-		                   const Border& border = {}, EStretch stretch = EStretch::fill) -> ref<VContainer>;
+		                   const Border& border = Border(), EStretch stretch = EStretch::fill) -> ref<VContainer>;
 	private:
 	};
 

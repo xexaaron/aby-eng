@@ -61,7 +61,7 @@ namespace aby::eng {
 		const auto& color = material.color;
 		const auto& tex   = material.texture;
 
-		const auto sz     = transform.size * scale;
+		const auto sz     = transform.scaled_size();
 		const auto offset = static_cast<uint32_t>(m_Vertices->count());
 
 		// uv = { min_u, min_v, max_u, max_v }

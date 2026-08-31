@@ -118,6 +118,14 @@ namespace aby::eng::ui {
 		m_Children[grid_idx(col, row)].reset();
 	}
 
+	auto Grid::fill(std::function<ref<Element>()> factory) -> void {
+		for (size_t col = 0; col < m_Columns; col++) {
+			for (size_t row = 0; row < m_Rows; row++) {
+				add_child(factory(), col, row);
+			}
+		}
+	}
+
 	auto Grid::add_row() -> void {
 		resize_grid(m_Columns, m_Rows + 1);
 	}

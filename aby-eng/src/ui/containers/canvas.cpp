@@ -26,7 +26,7 @@ namespace aby::eng::ui {
 	auto Canvas::on_event(win::Event& event) -> bool {
 		win::EventDispatcher dsp(event);
 		dsp.dispatch(&Canvas::on_window_resize, this);
-		return false;
+		return Element::on_event(event);
 	}
 
 	auto Canvas::on_window_resize(win::WindowResizedEvent& event) -> bool {

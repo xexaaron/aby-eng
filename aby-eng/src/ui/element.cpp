@@ -96,7 +96,7 @@ namespace aby::eng::ui {
 	}
 
 	auto Element::resolved_layout() const -> Rect2D {
-		return m_ResolvedLayout;
+		return Rect2D(m_ResolvedLayout.pos, m_ResolvedLayout.size * m_Transform.scale);
 	}
 
 	auto Element::children() const -> std::span<const ref<Element>> {

@@ -1,9 +1,12 @@
 #include <aby-eng/core/app.hpp>
 #include <aby-eng/core/entry.hpp>
 #include <aby-eng/core/renderer.hpp>
+#include <aby-eng/ui/button.hpp>
+#include <aby-eng/ui/containers/aspectratiobox.hpp>
 #include <aby-eng/ui/containers/canvas.hpp>
 #include <aby-eng/ui/containers/container.hpp>
 #include <aby-eng/ui/containers/grid.hpp>
+#include <aby-eng/ui/image.hpp>
 
 namespace aby::eng::sandbox {
 
@@ -53,6 +56,17 @@ namespace aby::eng::sandbox {
 			return m_AppInfo;
 		}
 
+		/**
+		 * What a UI script could look like:
+		 * 	
+		 * 	Canvas((hex | [r,g,b,a] | "style name"))
+		 * 		- HContainer((transform | size), (direction), (padding), (spacing), (border), (stretch))
+		 * 			- ...
+		 * 		- Grid((transform | size), (((rows), (cols)) | rowsXcols))
+		 * 			- <fill | (x, y)> Image((transform | size), "texture.png")
+		 * 		- Button((transform | size), Style(...))
+		 * 			- <on_click>    
+		 */
 		auto on_exec() -> void {
 			auto canvas = ui::Canvas::create(glm::fvec4{ 1.f, 0.f, 0.f, 0.25f });
 
@@ -124,8 +138,21 @@ namespace aby::eng::sandbox {
 			canvas->add_child(primary_container);
 
 			auto grid = ui::Grid::create(Transform2D({ 300, 0 }, { 300, 300 }, 1.f), 4, 4);
-			grid->set_border(2.f, { 0.15f, 0.15f, 0.15f, 1.f });
+			grid->set_border(2.f, { 0.15f, 0.15f, 1.f, 1.f });
 
+			grid->fill([]() {
+				return ui::Image::create(eng::Transform2D({ 0, 0 }, { 18.75f, 18.75f }), "Cobblestone.png");
+			});
+
+			auto aspect = ui::AspectRatioBox::create(Transform2D({ 0, 300 }, { 100, 100 }));
+
+			auto button = ui::Button::create(Transform2D({ 0, 300 }, { 100, 100 }),
+			                                 ui::ButtonStyle(
+			                                     ui::Style(Material2D({ 0.3f, 0.3f, 0.3f, 1.f }),
+			                                               ui::Border(2.f, { 0.15f, 0.15f, 0.15f, 1.f }))));
+
+			aspect->add_child(button);
+			canvas->add_child(aspect);
 			canvas->add_child(grid);
 
 			App::add_obj(canvas);

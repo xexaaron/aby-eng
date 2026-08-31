@@ -7,19 +7,22 @@ namespace aby::eng::ui {
 	public:
 		Grid(Transform2D transform, size_t cols, size_t rows,
 		     float spacing = 0.f, float padding = 0.f,
-		     const Border& border = {},
+		     const Border& border = Border(),
 		     EStretch stretch     = EStretch::fill);
 
 		static auto create(Transform2D transform, size_t cols, size_t rows,
 		                   float spacing = 0.f, float padding = 0.f,
-		                   const Border& border = {},
+		                   const Border& border = Border(),
 		                   EStretch stretch     = EStretch::fill) -> ref<Grid>;
 
 		auto on_tick(const Time& deltatime) -> void override;
 		auto on_render() -> void override;
 
 		auto add_child(ref<Element> element, size_t col, size_t row) -> void;
+
 		auto remove_child(size_t col, size_t row) -> void;
+		auto fill(std::function<ref<Element>()> factory) -> void;
+
 		auto add_row() -> void;
 		auto add_column() -> void;
 

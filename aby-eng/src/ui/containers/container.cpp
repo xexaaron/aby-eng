@@ -102,6 +102,8 @@ namespace aby::eng::ui {
 
 		Material2D mat(m_Border.color);
 
+		Element::on_render();
+
 		if (m_Border.top > 0.f) {
 			const float half = m_Border.top / 2.f;
 
@@ -145,8 +147,6 @@ namespace aby::eng::ui {
 
 			Renderer2D::quad(transform, mat);
 		}
-
-		Element::on_render();
 	}
 
 	auto Container::set_stretch(EStretch stretch) -> void {

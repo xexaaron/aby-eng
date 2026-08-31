@@ -7,13 +7,6 @@
 
 namespace aby::eng {
 
-	struct Vertex2D {
-		glm::fvec2 pos   = { 0.f, 0.f };
-		glm::fvec2 uv    = { 0.f, 0.f };
-		glm::fvec4 color = { 1.f, 1.f, 1.f, 1.f };
-		uint32_t tex     = 0; // tex id 0 is valid, it will be a 1x1 white texture
-	};
-
 	class ABY_API Renderer2D {
 	public:
 		/**
@@ -21,7 +14,7 @@ namespace aby::eng {
 		 * @param transform The quad transform in pixel coordinates
 		 * @param material The rendering material style
 		 */
-		static auto quad(const Transform2D& transform, const Material2D& material = {}) -> void;
+		static auto quad(const Transform2D& transform, const Material2D& material = Material2D()) -> void;
 	private:
 		static auto init() -> bool;
 		static auto deinit() -> void;

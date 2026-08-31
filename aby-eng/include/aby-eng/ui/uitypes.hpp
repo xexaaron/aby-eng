@@ -1,6 +1,8 @@
 #pragma once
 #include "common.hpp"
+#include "misc/types.hpp"
 
+#include <format>
 #include <glm/glm.hpp>
 
 namespace aby::eng::ui {
@@ -21,9 +23,15 @@ namespace aby::eng::ui {
 		backward, // right to left, or down to up
 	};
 
+	enum class EHoverState {
+		normal,
+		hovered,
+		pressed
+	};
+
 	struct ABY_API Border {
-		Border(float scalar = 0.f, glm::fvec4 color = { 1.f, 1.f, 1.f, 1.f });
-		Border(float top, float right, float bottom, float left, glm::fvec4 color = { 1.f, 1.f, 1.f, 1.f });
+		explicit Border(float scalar = 0.f, glm::fvec4 color = { 1.f, 1.f, 1.f, 1.f });
+		explicit Border(float top, float right, float bottom, float left, glm::fvec4 color = { 1.f, 1.f, 1.f, 1.f });
 
 		auto set_scalar(float scalar = 0.f) -> void;
 
@@ -32,6 +40,23 @@ namespace aby::eng::ui {
 		float bottom     = 0.f;
 		float left       = 0.f;
 		glm::fvec4 color = { 1.f, 1.f, 1.f, 1.f };
+	};
+
+	struct ABY_API Style {
+		explicit Style(const glm::fvec4& style_color, const Border& border = Border());
+		explicit Style(const Material2D& style_material, const Border& border = Border());
+
+		Material2D material;
+		Border border;
+	};
+
+	struct ABY_API ButtonStyle {
+		explicit ButtonStyle(const Style& normal, const Style& hovered, const Style& pressed);
+		explicit ButtonStyle(const Style& base);
+
+		Style normal;
+		Style hovered;
+		Style pressed;
 	};
 
 } // namespace aby::eng::ui
@@ -60,7 +85,7 @@ namespace std {
 					break;
 				case aby::eng::ui::EStretch::cover:
 					str = "cover";
-					breka;
+					break;
 			}
 			return format_to(ctx.out(), "{}", str);
 		}
