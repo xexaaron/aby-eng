@@ -34,6 +34,29 @@
             "cStandard": "c17",
             "cppStandard": "c++23",
             "intelliSenseMode": "windows-msvc-x64"
+        },
+        {
+            "name": "Linux-GCC",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "ABY_BUILD_DLL=1",
+                "ABY_WIN_ASSERT=1",
+                "ABY_ENG_ENABLE_ASSERT=1"
+            ],
+            "compilerArgs": [
+            ],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c17",
+            "cppStandard": "c++23",
+            "browse": {
+                "path": ["${workspaceFolder}"],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
         }
     ],
     "version": 4

@@ -3,12 +3,14 @@
 #include <cstdint>
 #include <memory>
 
-#pragma once
-
-#if ABY_BUILD_DLL == 1
-#	define ABY_API __declspec(dllexport)
+#ifdef _WIN32
+#	if ABY_BUILD_DLL == 1
+#		define ABY_API __declspec(dllexport)
+#	else
+#		define ABY_API __declspec(dllimport)
+#	endif
 #else
-#	define ABY_API __declspec(dllimport)
+#	define ABY_API __attribute__((visibility("default")))
 #endif
 
 #if ABY_ENG_ENABLE_ASSERT == 1
