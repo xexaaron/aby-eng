@@ -8,6 +8,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <oneapi/tbb/concurrent_queue.h>
 #include <print>
 #include <thread>
 #include <unordered_map>
@@ -147,7 +148,7 @@ namespace aby::eng {
 		template <typename K, typename V>
 		using MapTy = std::unordered_map<K, V>;
 		template <typename T>
-		using QueueTy = rhi::ConcurrentQueue<T>;
+		using QueueTy = tbb::concurrent_queue<T>;
 		template <typename T>
 		using ContainerTy = std::vector<T>;
 	public:
