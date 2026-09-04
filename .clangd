@@ -1,0 +1,4 @@
+# clangd configuration file for linux
+
+Diagnostics:
+  UnusedIncludes: None
