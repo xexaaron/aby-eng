@@ -38,7 +38,21 @@
         {
             "name": "Linux-GCC",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/aby-eng/include",
+                "${workspaceFolder}/aby-eng/include/aby-eng",
+                "${workspaceFolder}/vendor/aby-rhi/include",
+                "${workspaceFolder}/vendor/aby-rhi/include/aby-rhi",
+                "${workspaceFolder}/vendor/aby-rhi/vendor/stb_image/include",
+                "${workspaceFolder}/vendor/aby-rhi/vendor/shaderc/libshaderc/include",
+                "${workspaceFolder}/vendor/aby-rhi/vendor/vk-bootstrap/src",
+                "${workspaceFolder}/vendor/aby-rhi/vendor/vma/include",
+                "${workspaceFolder}/vendor/aby-win/aby-win/include",
+                "${workspaceFolder}/vendor/aby-win/aby-win/include/aby-win",
+                "${workspaceFolder}/vendor/aby-win/vendor/SDL/include",
+                "${workspaceFolder}/vendor/aby-win/vendor/glfw/include",
+                "${workspaceFolder}/vendor/glm",
+                "${workspaceFolder}/vendor/tbb/include",
+                "${workspaceFolder}/vendor/tbb/include/oneapi"
             ],
             "defines": [
                 "_DEBUG",
@@ -56,7 +70,7 @@
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
             },
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+            "compileCommands": "${workspaceFolder}/bin/compile_commands.json"
         }
     ],
     "version": 4

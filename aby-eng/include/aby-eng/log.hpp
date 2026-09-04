@@ -1,6 +1,7 @@
 #pragma once
 #include "common.hpp"
 
+#include <aby-rhi/interfaces/default_job_system.hpp>
 #include <chrono>
 #include <filesystem>
 #include <format>
@@ -10,12 +11,6 @@
 #include <print>
 #include <thread>
 #include <unordered_map>
-
-#ifdef _MSC_VER
-#	include <concurrent_queue.h>
-#else
-#	error "TODO: concurrent queue for non msvc platforms"
-#endif
 
 #define __LOC_FN_SEP_WIDTH__ "70"
 #define __TIMESTAMP_FORMAT__ "\033[1;30m%H:%M:%S\033[0m"
@@ -152,7 +147,7 @@ namespace aby::eng {
 		template <typename K, typename V>
 		using MapTy = std::unordered_map<K, V>;
 		template <typename T>
-		using QueueTy = concurrency::concurrent_queue<T>;
+		using QueueTy = rhi::ConcurrentQueue<T>;
 		template <typename T>
 		using ContainerTy = std::vector<T>;
 	public:

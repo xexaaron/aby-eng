@@ -72,7 +72,7 @@ namespace aby::eng::sandbox {
 
 			auto primary_container = ui::HContainer::create(
 			    Transform2D({ 0, 0 },
-			                { 300, 300 }, 1.f),
+				            { 300, 300 }, 1.f),
 			    ui::EDirection::forward,
 			    2.f,
 			    15.f,
@@ -149,7 +149,7 @@ namespace aby::eng::sandbox {
 			auto button = ui::Button::create(Transform2D({ 0, 300 }, { 100, 100 }),
 			                                 ui::ButtonStyle(
 			                                     ui::Style(Material2D({ 0.3f, 0.3f, 0.3f, 1.f }),
-			                                               ui::Border(2.f, { 0.15f, 0.15f, 0.15f, 1.f }))));
+												           ui::Border(2.f, { 0.15f, 0.15f, 0.15f, 1.f }))));
 
 			aspect->add_child(button);
 			canvas->add_child(aspect);

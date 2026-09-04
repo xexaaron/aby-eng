@@ -4,7 +4,9 @@
 #include "core/renderer.hpp"
 #include "log.hpp"
 
+#include <aby-win/backend/glfw/glfw-window.hpp>
 #include <aby-win/common.hpp>
+#include <aby-win/window.hpp>
 #include <chrono>
 
 namespace aby::eng {
@@ -92,10 +94,20 @@ namespace aby::eng {
 
 		rhi::ContextParams ctx_cfg{
 			.renderer_backend = rhi::ERenderer::vulkan,
-			.window_backend   = rhi::EWindow::win32, // TODO: not hardcode this
+			.window_backend   = rhi::EWindow::automatic, // TODO: not hardcode this
 			.native_window    = m_Window->native().platform_window,
 			.graphics         = {}
 		};
+
+#ifdef __linux__
+		if (window_cfg.window_backend == win::EWindow::sdl) {
+			ctx_cfg.wl_get_size_cb = [](uint32_t* w, uint32_t* h) {
+				auto [x, y] = m_Window->size();
+				*w          = x;
+				*h          = y;
+			};
+		}
+#endif
 
 		m_Context->set_interface<RHILoggerInterface>();
 		if (!m_Context->init(ctx_cfg)) {
@@ -125,7 +137,7 @@ namespace aby::eng {
 	auto App::deinit() -> void {
 		Renderer2D::deinit();
 		m_Context->deinit();
-		m_Window.release();
+		auto _ = m_Window.release();
 		Logger::shutdown();
 	}
 
