@@ -1,6 +1,9 @@
 #include "misc/utf8.hpp"
 
+#include "log.hpp"
+
 #include <iterator>
+#include <vector>
 
 namespace aby::eng::utf8 {
 
@@ -55,8 +58,23 @@ namespace aby::eng::utf8 {
 		return *this;
 	}
 
+	auto CodepointIterator::operator--() -> CodepointIterator& {
+		auto* p = reinterpret_cast<const unsigned char*>(m_Ptr);
+
+		do {
+			--p;
+		} while ((*p & 0xC0) == 0x80);
+
+		m_Ptr = reinterpret_cast<const char*>(p);
+		return *this;
+	}
+
 	auto CodepointIterator::operator!=(const CodepointIterator& other) const -> bool {
 		return m_Ptr != other.m_Ptr;
+	}
+
+	CodepointIterator::operator const char*() {
+		return m_Ptr;
 	}
 
 } // namespace aby::eng::utf8
@@ -78,12 +96,81 @@ namespace aby::eng::utf8 {
 		return CodepointIterator(m_String.data() + m_String.size(), m_String.data() + m_String.size());
 	}
 
+	auto Codepoints::byte_offset(size_t idx) const -> size_t {
+		expect(idx <= size(), "codepoint index out of bounds");
+
+		auto it = begin();
+		std::advance(it, idx);
+
+		return static_cast<size_t>(it - m_String.data());
+	}
+
+	auto Codepoints::operator[](size_t idx) -> char32_t {
+		auto it = begin();
+		std::advance(it, idx);
+		return *it;
+	}
+
+	auto Codepoints::operator[](size_t idx) const -> char32_t {
+		auto it = begin();
+		std::advance(it, idx);
+		return *it;
+	}
+
 } // namespace aby::eng::utf8
 
 namespace aby::eng::utf8 {
 
 	auto codepoints(std::string_view string) -> Codepoints {
 		return Codepoints(string);
+	}
+
+	auto encode(codepoint cp) -> std::string {
+		std::string str;
+		encode(str, cp);
+		return str;
+	}
+
+	auto encode(std::span<const codepoint> cps) -> std::string {
+		std::string str;
+		encode(str, cps);
+		return str;
+	}
+
+	auto encode(std::string& str, codepoint cp) -> void {
+		encode(str, std::span<const codepoint>(&cp, 1));
+	}
+
+	auto encode(std::string& str, std::span<const codepoint> cps) -> void {
+		for (auto cp : cps) {
+			if (cp <= 0x7F) {
+				str.push_back(static_cast<char>(cp));
+			} else if (cp <= 0x7FF) {
+				str.push_back(static_cast<char>(0xC0 | (cp >> 6)));
+				str.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+			} else if (cp <= 0xFFFF) {
+				str.push_back(static_cast<char>(0xE0 | (cp >> 12)));
+				str.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
+				str.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+			} else {
+				str.push_back(static_cast<char>(0xF0 | (cp >> 18)));
+				str.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
+				str.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
+				str.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+			}
+		}
+	}
+
+	auto to_lower(utf8::codepoint cp) -> utf8::codepoint {
+		if (cp >= U'A' && cp <= U'Z')
+			return cp + (U'a' - U'A');
+		return cp;
+	}
+
+	auto to_upper(utf8::codepoint cp) -> utf8::codepoint {
+		if (cp >= U'a' && cp <= U'z')
+			return cp - (U'a' - U'A');
+		return cp;
 	}
 
 } // namespace aby::eng::utf8

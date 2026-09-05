@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME} SHARED
     include/aby-eng/core/entry.hpp
     include/aby-eng/core/renderer.hpp
     include/aby-eng/core/object.hpp
+    include/aby-eng/core/text.hpp
     
     include/aby-eng/misc/types.hpp
     include/aby-eng/misc/uuid.hpp
@@ -39,6 +40,7 @@ add_library(${PROJECT_NAME} SHARED
     src/core/entry.cpp
     src/core/renderer.cpp
     src/core/object.cpp
+    src/core/text.cpp
     
     src/misc/types.cpp
     src/misc/uuid.cpp

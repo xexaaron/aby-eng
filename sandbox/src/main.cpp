@@ -1,25 +1,27 @@
 #include <aby-eng/core/app.hpp>
 #include <aby-eng/core/entry.hpp>
 #include <aby-eng/core/renderer.hpp>
+#include <aby-eng/log.hpp>
 #include <aby-eng/misc/font.hpp>
+#include <aby-eng/misc/utf8.hpp>
 #include <aby-eng/ui/button.hpp>
 #include <aby-eng/ui/containers/aspectratiobox.hpp>
 #include <aby-eng/ui/containers/canvas.hpp>
 #include <aby-eng/ui/containers/container.hpp>
 #include <aby-eng/ui/containers/grid.hpp>
 #include <aby-eng/ui/image.hpp>
+#include <algorithm>
 
 namespace aby::eng::sandbox {
 
 	class TestObject : public eng::Object {
 	public:
 		auto on_create() -> void override {
-			m_Font = Font::create("VeraMono.ttf", 12.f, true);
+			m_EmojiFont = Font::create("NotoColorEmoji-Regular.ttf", 12.f, false);
 		}
 
 		auto on_render() -> void override {
 			eng::Renderer2D::quad(m_QuadTransform);
-			eng::Renderer2D::text({ 0, 0 }, m_Font, Text2D("hello world\nits a beautiful day"));
 		}
 
 		auto on_tick(const Time& dt) -> void override {
@@ -46,7 +48,7 @@ namespace aby::eng::sandbox {
 	private:
 		bool m_Direction                 = true;
 		eng::Transform2D m_QuadTransform = eng::Transform2D({ 0, 0 }, { 200, 200 }, 1.f);
-		FontPtr m_Font;
+		FontPtr m_EmojiFont;
 	};
 
 	class EntryPoint final : public eng::EntryPoint {
@@ -75,6 +77,8 @@ namespace aby::eng::sandbox {
 		 * 			- <on_click>    
 		 */
 		auto on_exec() -> void {
+			m_Font = Font::create("VeraMono.ttf", 12.f, true);
+
 			auto canvas = ui::Canvas::create(glm::fvec4{ 1.f, 0.f, 0.f, 0.25f });
 
 			auto primary_container = ui::HContainer::create(
@@ -154,9 +158,26 @@ namespace aby::eng::sandbox {
 			auto aspect = ui::AspectRatioBox::create(Transform2D({ 0, 300 }, { 100, 100 }));
 
 			auto button = ui::Button::create(Transform2D({ 0, 300 }, { 100, 100 }),
+			                                 Text("hello", m_Font),
 			                                 ui::ButtonStyle(
 			                                     ui::Style(Material2D({ 0.3f, 0.3f, 0.3f, 1.f }),
 												           ui::Border(2.f, { 0.15f, 0.15f, 0.15f, 1.f }))));
+
+			bool swap = false;
+			Text txt("foOéööøΩЖ世界😀🚀ñÑüÜß", m_Font);
+			log_inf("base:        {}", txt);
+			log_inf("lower:       {}", txt.to_lower());
+			log_inf("upper:       {}", txt.to_upper());
+			log_inf("transformed: {}", txt.transform([&swap](utf8::codepoint c) -> utf8::codepoint {
+				utf8::codepoint out;
+				if (swap) {
+					out = utf8::to_lower(c);
+				} else {
+					out = utf8::to_upper(c);
+				}
+				swap = !swap;
+				return out;
+			}));
 
 			aspect->add_child(button);
 			canvas->add_child(aspect);
@@ -170,6 +191,7 @@ namespace aby::eng::sandbox {
 		}
 	private:
 		AppInfo m_AppInfo;
+		FontPtr m_Font;
 	};
 
 } // namespace aby::eng::sandbox

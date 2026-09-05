@@ -57,9 +57,9 @@ namespace aby::eng {
 		auto line_height() const -> float;
 		auto glyphs() const -> const std::unordered_map<char32_t, Glyph>&;
 		auto glyph(char32_t c) const -> const Glyph&;
-		auto measure(std::string_view text) -> glm::fvec2;
-		auto measure_height(std::string_view text) -> float;
-		auto measure_width(std::string_view text) -> float;
+		auto measure(std::string_view text) const -> glm::fvec2;
+		auto measure_height(std::string_view text) const -> float;
+		auto measure_width(std::string_view text) const -> float;
 
 		auto is_system() const -> bool;
 		auto is_mono() const -> bool;

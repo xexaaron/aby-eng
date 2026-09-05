@@ -1,11 +1,13 @@
 #include "ui/button.hpp"
 
 #include "core/renderer.hpp"
+#include "misc/types.hpp"
 
 namespace aby::eng::ui {
 
-	Button::Button(const Transform2D& transform, const ButtonStyle& style) :
+	Button::Button(const Transform2D& transform, const Text& text, const ButtonStyle& style) :
 	    Element(transform),
+	    m_Text(text),
 	    m_Style(style),
 	    m_OnHovered(nullptr),
 	    m_OnPressed(nullptr),
@@ -14,8 +16,8 @@ namespace aby::eng::ui {
 	    m_State(EHoverState::normal) {
 	}
 
-	auto Button::create(const Transform2D& transform, const ButtonStyle& style) -> ref<Button> {
-		return std::make_shared<Button>(transform, style);
+	auto Button::create(const Transform2D& transform, const Text& text, const ButtonStyle& style) -> ref<Button> {
+		return std::make_shared<Button>(transform, text, style);
 	}
 
 	auto Button::on_render() -> void {
@@ -84,7 +86,17 @@ namespace aby::eng::ui {
 			Renderer2D::quad(transform, Material2D(border.color));
 		}
 
-        Element::on_render();
+		if (!m_Text.empty()) {
+			auto center  = rect.center();
+			auto size    = m_Text.size();
+			size        /= 2;
+			center      -= size;
+
+			Text2D txt(m_Text.view());
+			Renderer2D::text(center, m_Text.font(), txt);
+		}
+
+		Element::on_render();
 	}
 
 	auto Button::on_event(win::Event& event) -> bool {

@@ -1,4 +1,5 @@
 #pragma once
+#include "core/text.hpp"
 #include "ui/element.hpp"
 #include "ui/uitypes.hpp"
 
@@ -6,9 +7,9 @@ namespace aby::eng::ui {
 
 	class ABY_API Button : public Element {
 	public:
-		Button(const Transform2D& transform, const ButtonStyle& style);
+		Button(const Transform2D& transform, const Text& text, const ButtonStyle& style);
 
-		static auto create(const Transform2D& transform, const ButtonStyle& style) -> ref<Button>;
+		static auto create(const Transform2D& transform, const Text& text, const ButtonStyle& style) -> ref<Button>;
 
 		auto on_render() -> void override;
 		auto on_event(win::Event& event) -> bool override;
@@ -21,6 +22,7 @@ namespace aby::eng::ui {
 		auto on_mouse_pressed(win::MousePressedEvent& event) -> bool;
 		auto on_mouse_released(win::MouseReleasedEvent& event) -> bool;
 	private:
+		Text m_Text;
 		ButtonStyle m_Style;
 		std::function<void()> m_OnHovered;
 		std::function<void()> m_OnPressed;
