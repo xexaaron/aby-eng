@@ -1,6 +1,7 @@
 #include <aby-eng/core/app.hpp>
 #include <aby-eng/core/entry.hpp>
 #include <aby-eng/core/renderer.hpp>
+#include <aby-eng/misc/font.hpp>
 #include <aby-eng/ui/button.hpp>
 #include <aby-eng/ui/containers/aspectratiobox.hpp>
 #include <aby-eng/ui/containers/canvas.hpp>
@@ -69,6 +70,8 @@ namespace aby::eng::sandbox {
 		 */
 		auto on_exec() -> void {
 			auto canvas = ui::Canvas::create(glm::fvec4{ 1.f, 0.f, 0.f, 0.25f });
+
+			m_Font = Font::create("VeraMono.ttf", 12.f, true);
 
 			auto primary_container = ui::HContainer::create(
 			    Transform2D({ 0, 0 },
@@ -163,6 +166,7 @@ namespace aby::eng::sandbox {
 		}
 	private:
 		AppInfo m_AppInfo;
+		FontPtr m_Font;
 	};
 
 } // namespace aby::eng::sandbox

@@ -1,5 +1,6 @@
 #include "core/app.hpp"
 
+#include "common-enums.hpp"
 #include "core/entry.hpp"
 #include "core/renderer.hpp"
 #include "log.hpp"
@@ -79,6 +80,16 @@ namespace aby::eng {
 		win::ILogger::set<WINLoggerInterface>();
 		win::Config window_cfg;
 
+		// TODO: Temporary arg handling
+#ifdef __linux__
+		rhi::EWindow window_backend = rhi::EWindow::wayland;
+		for (int32_t i = 0; i < info.argc; i++) {
+			if (std::strcmp(info.argv[i], "--render-doc") == 0) {
+				window_backend = rhi::EWindow::x11;
+			}
+		}
+#endif
+
 		window_cfg.set_name(info.name)
 		    .set_backends(win::EWindow::sdl, win::ERenderBackend::vulkan)
 		    .set_size(800, 600)
@@ -86,7 +97,8 @@ namespace aby::eng {
 		    .set_resizable(true)
 		    .set_focused(true)
 		    .set_visible(true)
-		    .set_visible(true);
+		    .set_visible(true)
+		    .set_render_doc(window_backend == rhi::EWindow::x11);
 
 		m_Window = win::Window::create(window_cfg);
 
@@ -94,9 +106,13 @@ namespace aby::eng {
 
 		rhi::ContextParams ctx_cfg{
 			.renderer_backend = rhi::ERenderer::vulkan,
-			.window_backend   = rhi::EWindow::automatic, // TODO: not hardcode this
-			.native_window    = m_Window->native().platform_window,
-			.graphics         = {}
+#ifdef __linux__
+			.window_backend = window_backend,
+#else
+			.window_backend = rhi::Ewindow::automatic,
+#endif
+			.native_window = m_Window->native().platform_window,
+			.graphics      = {}
 		};
 
 #ifdef __linux__

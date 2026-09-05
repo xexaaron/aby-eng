@@ -19,7 +19,8 @@ add_library(${PROJECT_NAME} SHARED
     include/aby-eng/misc/types.hpp
     include/aby-eng/misc/uuid.hpp
     include/aby-eng/misc/time.hpp
-    
+    include/aby-eng/misc/font.hpp
+
     include/aby-eng/ui/element.hpp
     include/aby-eng/ui/uitypes.hpp
     include/aby-eng/ui/image.hpp
@@ -41,6 +42,7 @@ add_library(${PROJECT_NAME} SHARED
     src/misc/types.cpp
     src/misc/uuid.cpp
     src/misc/time.cpp
+    src/misc/font.cpp
 
     src/ui/element.cpp
     src/ui/uitypes.cpp
@@ -66,6 +68,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     aby-win::aby-win
     aby-rhi::aby-rhi
     glm::glm
+    freetype
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
