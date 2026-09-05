@@ -13,8 +13,13 @@ namespace aby::eng::sandbox {
 
 	class TestObject : public eng::Object {
 	public:
+		auto on_create() -> void override {
+			m_Font = Font::create("VeraMono.ttf", 12.f, true);
+		}
+
 		auto on_render() -> void override {
 			eng::Renderer2D::quad(m_QuadTransform);
+			eng::Renderer2D::text({ 0, 0 }, m_Font, Text2D("hello world\nits a beautiful day"));
 		}
 
 		auto on_tick(const Time& dt) -> void override {
@@ -41,6 +46,7 @@ namespace aby::eng::sandbox {
 	private:
 		bool m_Direction                 = true;
 		eng::Transform2D m_QuadTransform = eng::Transform2D({ 0, 0 }, { 200, 200 }, 1.f);
+		FontPtr m_Font;
 	};
 
 	class EntryPoint final : public eng::EntryPoint {
@@ -70,8 +76,6 @@ namespace aby::eng::sandbox {
 		 */
 		auto on_exec() -> void {
 			auto canvas = ui::Canvas::create(glm::fvec4{ 1.f, 0.f, 0.f, 0.25f });
-
-			m_Font = Font::create("VeraMono.ttf", 12.f, true);
 
 			auto primary_container = ui::HContainer::create(
 			    Transform2D({ 0, 0 },
@@ -166,7 +170,6 @@ namespace aby::eng::sandbox {
 		}
 	private:
 		AppInfo m_AppInfo;
-		FontPtr m_Font;
 	};
 
 } // namespace aby::eng::sandbox

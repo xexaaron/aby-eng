@@ -67,6 +67,17 @@ namespace aby::eng {
 		uint32_t tex     = 0; // tex id 0 is valid, it will be a 1x1 white texture
 	};
 
+	struct ABY_API Text2D {
+		explicit Text2D(std::string_view text);
+		explicit Text2D(std::string_view text, const glm::fvec4& tint);
+		explicit Text2D(std::string_view text, float scale);
+		explicit Text2D(std::string_view text, const glm::fvec4& tint, float scale);
+
+		std::string_view text = "";
+		glm::fvec4 tint       = { 1.f, 1.f, 1.f, 1.f };
+		float scale           = 1.f;
+	};
+
 } // namespace aby::eng
 
 namespace std {

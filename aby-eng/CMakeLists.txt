@@ -20,6 +20,7 @@ add_library(${PROJECT_NAME} SHARED
     include/aby-eng/misc/uuid.hpp
     include/aby-eng/misc/time.hpp
     include/aby-eng/misc/font.hpp
+    include/aby-eng/misc/utf8.hpp
 
     include/aby-eng/ui/element.hpp
     include/aby-eng/ui/uitypes.hpp
@@ -43,6 +44,7 @@ add_library(${PROJECT_NAME} SHARED
     src/misc/uuid.cpp
     src/misc/time.cpp
     src/misc/font.cpp
+    src/misc/utf8.cpp
 
     src/ui/element.cpp
     src/ui/uitypes.cpp

@@ -170,3 +170,30 @@ namespace aby::eng {
 
 } // namespace aby::eng
 
+namespace aby::eng {
+
+	Text2D::Text2D(std::string_view text) :
+	    text(text),
+	    tint(1.f, 1.f, 1.f, 1.f),
+	    scale(1.f) {
+	}
+
+	Text2D::Text2D(std::string_view text, const glm::fvec4& tint) :
+	    text(text),
+	    tint(tint),
+	    scale(1.f) {
+	}
+
+	Text2D::Text2D(std::string_view text, float scale) :
+	    text(text),
+	    tint(1.f, 1.f, 1.f, 1.f),
+	    scale(scale) {
+	}
+
+	Text2D::Text2D(std::string_view text, const glm::fvec4& tint, float scale) :
+	    text(text),
+	    tint(tint),
+	    scale(scale) {
+	}
+
+} // namespace aby::eng

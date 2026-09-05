@@ -2,8 +2,10 @@
 
 #include "core/app.hpp"
 #include "log.hpp"
+#include "misc/utf8.hpp"
 
 #include <glm/ext/matrix_clip_space.hpp>
+#include <ranges>
 
 namespace aby::eng {
 
@@ -28,7 +30,7 @@ namespace aby::eng {
 			m_Pass   = rpb->add_shader("ui.vert")
 			               .add_shader("ui.frag")
 			               .add_push_constant<glm::mat4>("projection")
-			               .add_vertex_input<&Vertex2D::pos>(EFormat::rgb_f32)
+			               .add_vertex_input<&Vertex2D::pos>(EFormat::rg_f32)
 			               .add_vertex_input<&Vertex2D::uv>(EFormat::rg_f32)
 			               .add_vertex_input<&Vertex2D::color>(EFormat::rgba_f32)
 			               .add_vertex_input<&Vertex2D::tex>(EFormat::r_u32)
@@ -67,7 +69,7 @@ namespace aby::eng {
 		// uv = { min_u, min_v, max_u, max_v }
 
 		Vertex2D vertices[4] = {
-			{			   { pos.x, pos.y }, { uv.x, uv.y }, color, tex }, // top-left
+			{               { pos.x, pos.y }, { uv.x, uv.y }, color, tex }, // top-left
 			{        { pos.x + sz.x, pos.y }, { uv.z, uv.y }, color, tex }, // top-right
 			{ { pos.x + sz.x, pos.y + sz.y }, { uv.z, uv.w }, color, tex }, // bottom-right
 			{        { pos.x, pos.y + sz.y }, { uv.x, uv.w }, color, tex }  // bottom-left
@@ -84,6 +86,63 @@ namespace aby::eng {
 
 		m_Indices->push(indices);
 		m_Vertices->push(vertices);
+	}
+
+	auto Renderer2D::text(const glm::fvec2& pos, FontPtr font, const Text2D& text) -> void {
+		auto tex = font->texture()->id();
+
+		glm::fvec2 pen  = pos;
+		pen.y          += font->measure_height(text.text); // 0, 0 should mean top left from the "top left corner"
+
+		for (char32_t codepoint : utf8::codepoints(text.text)) {
+			if (codepoint == U'\n') {
+				pen.x  = pos.x;
+				pen.y += font->line_height() * text.scale;
+				continue;
+			}
+
+			const Glyph& g = font->glyph(codepoint);
+
+			const float x = pen.x + g.bearing.x * text.scale;
+			const float y = pen.y - g.bearing.y * text.scale;
+
+			Vertex2D vertices[4] = {
+				{                                                 { x, y },
+				 { g.uv_min.x, g.uv_min.y },
+				 text.tint,
+				 tex },
+
+				{                         { x + g.size.x * text.scale, y },
+				 { g.uv_max.x, g.uv_min.y },
+				 text.tint,
+				 tex },
+
+				{ { x + g.size.x * text.scale, y + g.size.y * text.scale },
+				 { g.uv_max.x, g.uv_max.y },
+				 text.tint,
+				 tex },
+
+				{                         { x, y + g.size.y * text.scale },
+				 { g.uv_min.x, g.uv_max.y },
+				 text.tint,
+				 tex }
+			};
+
+			const auto offset   = static_cast<uint32_t>(m_Vertices->count());
+			uint32_t indices[6] = {
+				offset + 0,
+				offset + 1,
+				offset + 2,
+				offset + 2,
+				offset + 3,
+				offset + 0
+			};
+
+			m_Indices->push(indices);
+			m_Vertices->push(vertices);
+
+			pen.x += g.advance * text.scale;
+		}
 	}
 
 	auto Renderer2D::deinit() -> void {

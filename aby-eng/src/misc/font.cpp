@@ -2,10 +2,11 @@
 
 #include "common-enums.hpp"
 #include "log.hpp"
-#include "resource.hpp"
-#include "texture.hpp"
+#include "misc/utf8.hpp"
 
 #include <aby-rhi/context.hpp>
+#include <aby-rhi/resource.hpp>
+#include <aby-rhi/texture.hpp>
 #include <algorithm>
 #include <freetype/freetype.h>
 #include <freetype2/ft2build.h>
@@ -117,6 +118,9 @@ namespace aby::eng {
 			uint32_t atlas_y      = padding;
 			uint32_t row_height   = 0;
 			uint32_t atlas_height = 0;
+			FontData font_data    = {};
+
+			font_data.mono = FT_IS_FIXED_WIDTH(face);
 
 			struct Bitmap {
 				char32_t codepoint;
@@ -255,20 +259,102 @@ namespace aby::eng {
 				glyphs.emplace(bitmap.codepoint, glyph);
 			}
 
+			if (font_data.mono) {
+				font_data.mono_advance = bitmaps[0].advance;
+			}
+			font_data.line_height = face->size->metrics.height / 64.f;
+			font_data.pixel_size  = px_size;
+			font_data.system      = system;
+
+			size_t non_zero_alpha = 0;
+
+			for (size_t i = 3; i < atlas.size(); i += 4) {
+				if (atlas[i] != 0) {
+					++non_zero_alpha;
+				}
+			}
+
 			auto texture = rhi::Texture::create(atlas_width, atlas_height, channels, std::move(atlas));
 
-			s_Fonts.add(resource, new Font(rel_path, system, px_size, glyphs, texture));
+			s_Fonts.add(resource, new Font(rel_path, font_data, glyphs, texture));
 		});
 
 		return rhi::create_resource(resource, s_Fonts);
 	}
 
-	Font::Font(const fs::path& rel_path, bool system, float px_size, const std::unordered_map<char32_t, Glyph>& glyphs, rhi::TexturePtr texture) :
+	Font::Font(const fs::path& rel_path, const FontData& data, const std::unordered_map<char32_t, Glyph>& glyphs, rhi::TexturePtr texture) :
 	    m_Path(rel_path),
-	    bSystem(system),
-	    m_PxSize(px_size),
+	    m_Data(data),
 	    m_Glyphs(glyphs),
 	    m_Texture(texture) {
+	}
+
+	auto Font::measure(std::string_view text) -> glm::fvec2 {
+		if (text.empty()) {
+			return { 0.0f, 0.0f };
+		}
+
+		float width     = 0.0f;
+		float max_width = 0.0f;
+		size_t lines    = 1;
+
+		for (char32_t cp : utf8::codepoints(text)) {
+			if (cp == U'\n') {
+				max_width = std::max(max_width, width);
+				width     = 0.0f;
+				++lines;
+				continue;
+			}
+
+			if (m_Data.mono) {
+				width += m_Data.mono_advance;
+			} else {
+				width += glyph(cp).advance;
+			}
+		}
+
+		max_width = std::max(max_width, width);
+
+		return {
+			max_width,
+			static_cast<float>(lines) * m_Data.line_height
+		};
+	}
+
+	auto Font::measure_height(std::string_view text) -> float {
+		if (text.empty()) {
+			return 0.0f;
+		}
+
+		size_t lines = 1;
+
+		for (char32_t cp : utf8::codepoints(text)) {
+			if (cp == U'\n') {
+				++lines;
+			}
+		}
+
+		return static_cast<float>(lines) * m_Data.line_height;
+	}
+
+	auto Font::measure_width(std::string_view text) -> float {
+		if (text.empty()) {
+			return 0.f;
+		}
+
+		if (m_Data.mono) {
+			auto ct = static_cast<float>(utf8::codepoints(text).size());
+			return ct * m_Data.mono_advance;
+		}
+
+		float width = 0.0f;
+
+		for (char32_t cp : utf8::codepoints(text)) {
+			const Glyph& g  = glyph(cp);
+			width          += g.advance;
+		}
+
+		return width;
 	}
 
 	auto Font::path() const -> const fs::path& {
@@ -280,7 +366,11 @@ namespace aby::eng {
 	}
 
 	auto Font::pixel_size() const -> float {
-		return m_PxSize;
+		return m_Data.pixel_size;
+	}
+
+	auto Font::line_height() const -> float {
+		return m_Data.line_height;
 	}
 
 	auto Font::glyphs() const -> const std::unordered_map<char32_t, Glyph>& {
@@ -292,7 +382,11 @@ namespace aby::eng {
 	}
 
 	auto Font::is_system() const -> bool {
-		return bSystem;
+		return m_Data.system;
+	}
+
+	auto Font::is_mono() const -> bool {
+		return m_Data.mono;
 	}
 
 } // namespace aby::eng

@@ -1,5 +1,6 @@
 #pragma once
 #include "common.hpp"
+#include "misc/font.hpp"
 #include "misc/types.hpp"
 
 #include <aby-rhi/aby-rhi.hpp>
@@ -15,6 +16,7 @@ namespace aby::eng {
 		 * @param material The rendering material style
 		 */
 		static auto quad(const Transform2D& transform, const Material2D& material = Material2D()) -> void;
+		static auto text(const glm::fvec2& pos, FontPtr font, const Text2D& text) -> void;
 	private:
 		static auto init() -> bool;
 		static auto deinit() -> void;
