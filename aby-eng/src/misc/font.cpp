@@ -121,12 +121,12 @@ namespace aby::eng {
 
 			std::vector<uint8_t> atlas(static_cast<size_t>(atlas_width) * atlas_height * channels);
 			FontData font_data = {};
-			std::unordered_map<char32_t, Glyph> glyphs;
+			std::unordered_map<utf8::codepoint, Glyph> glyphs;
 
 			for (auto& bitmap : bitmaps) {
 				detail::process_bitmap(bitmap, atlas, atlas_width, channels);
 				Glyph g = detail::create_glyph(bitmap, atlas_width, atlas_height, fixed_size, fixed_size_data);
-				glyphs.emplace(bitmap.codepoint, g);
+				glyphs.emplace(static_cast<utf8::codepoint>(bitmap.codepoint), g);
 			}
 
 			if (font_data.mono) {
@@ -145,18 +145,20 @@ namespace aby::eng {
 			}
 
 			auto texture = rhi::Texture::create(atlas_width, atlas_height, channels, std::move(atlas));
-
 			s_Fonts.add(resource, new Font(rel_path, font_data, glyphs, texture));
 		});
 
 		return rhi::create_resource(resource, s_Fonts);
 	}
 
-	Font::Font(const fs::path& rel_path, const FontData& data, const std::unordered_map<char32_t, Glyph>& glyphs, rhi::TexturePtr texture) :
+	Font::Font(const fs::path& rel_path, const FontData& data, const std::unordered_map<utf8::codepoint, Glyph>& glyphs, rhi::TexturePtr texture) :
 	    m_Path(rel_path),
 	    m_Data(data),
 	    m_Glyphs(glyphs),
 	    m_Texture(texture) {
+	}
+
+	Font::~Font() {
 	}
 
 	auto Font::measure(std::string_view text) const -> glm::fvec2 {
@@ -168,7 +170,7 @@ namespace aby::eng {
 		float max_width = 0.0f;
 		size_t lines    = 1;
 
-		for (char32_t cp : utf8::codepoints(text)) {
+		for (utf8::codepoint cp : utf8::codepoints(text)) {
 			if (cp == U'\n') {
 				max_width = std::max(max_width, width);
 				width     = 0.0f;
@@ -198,7 +200,7 @@ namespace aby::eng {
 
 		size_t lines = 1;
 
-		for (char32_t cp : utf8::codepoints(text)) {
+		for (utf8::codepoint cp : utf8::codepoints(text)) {
 			if (cp == U'\n') {
 				++lines;
 			}
@@ -219,7 +221,7 @@ namespace aby::eng {
 
 		float width = 0.0f;
 
-		for (char32_t cp : utf8::codepoints(text)) {
+		for (utf8::codepoint cp : utf8::codepoints(text)) {
 			const Glyph& g  = glyph(cp);
 			width          += g.advance;
 		}
@@ -243,11 +245,11 @@ namespace aby::eng {
 		return m_Data.line_height;
 	}
 
-	auto Font::glyphs() const -> const std::unordered_map<char32_t, Glyph>& {
+	auto Font::glyphs() const -> const std::unordered_map<utf8::codepoint, Glyph>& {
 		return m_Glyphs;
 	}
 
-	auto Font::glyph(char32_t c) const -> const Glyph& {
+	auto Font::glyph(utf8::codepoint c) const -> const Glyph& {
 		auto it = m_Glyphs.find(c);
 		expect(it != m_Glyphs.end(), "glyph codepoint 'U+{:04X}' does not exist", static_cast<uint32_t>(c));
 		return it->second;

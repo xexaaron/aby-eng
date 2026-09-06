@@ -71,7 +71,7 @@ namespace aby::eng {
 		auto operator<=>(const Text& other) const -> std::strong_ordering;
 		auto operator<=>(std::string_view other) const -> std::strong_ordering;
 		auto operator[](size_t idx) const -> utf8::codepoint;
-		auto operator[](size_t idx) -> char32_t;
+		auto operator[](size_t idx) -> utf8::codepoint;
 	private:
 		FontPtr m_Font;
 		std::string m_Data;

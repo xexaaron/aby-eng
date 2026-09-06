@@ -6,6 +6,7 @@
 
 #include <glm/ext/matrix_clip_space.hpp>
 #include <ranges>
+#include <sstream>
 
 namespace aby::eng {
 
@@ -94,7 +95,7 @@ namespace aby::eng {
 		glm::fvec2 pen  = pos;
 		pen.y          += font->measure_height(text.text); // 0, 0 should mean top left from the "top left corner"
 
-		for (char32_t codepoint : utf8::codepoints(text.text)) {
+		for (utf8::codepoint codepoint : utf8::codepoints(text.text)) {
 			if (codepoint == U'\n') {
 				pen.x  = pos.x;
 				pen.y += font->line_height() * text.scale;
@@ -145,6 +146,10 @@ namespace aby::eng {
 		}
 	}
 
+	auto Renderer2D::textf(const glm::fvec2& pos, FontPtr font, const Text2D& text) -> void {
+		expect(false, "unimplemented");
+	}
+
 	auto Renderer2D::deinit() -> void {
 	}
 
@@ -178,4 +183,149 @@ namespace aby::eng {
 		return m_Renderer->on_end();
 	}
 
+	auto Renderer2D::parse_hex_color(std::string_view value, glm::vec4& out) -> size_t {
+		constexpr size_t tag_size = 7; // #RRGGBB
+
+		if (value.size() < tag_size || value[0] != '#')
+			return std::string_view::npos;
+
+		auto hex = [](char c) -> int {
+			if (c >= '0' && c <= '9') return c - '0';
+			if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+			if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+			return -1;
+		};
+
+		const int r0 = hex(value[1]);
+		const int r1 = hex(value[2]);
+		const int g0 = hex(value[3]);
+		const int g1 = hex(value[4]);
+		const int b0 = hex(value[5]);
+		const int b1 = hex(value[6]);
+
+		if (r0 < 0 || r1 < 0 ||
+		    g0 < 0 || g1 < 0 ||
+		    b0 < 0 || b1 < 0)
+			return std::string_view::npos;
+
+		out = {
+			static_cast<float>((r0 << 4) | r1) / 255.0f,
+			static_cast<float>((g0 << 4) | g1) / 255.0f,
+			static_cast<float>((b0 << 4) | b1) / 255.0f,
+			1.0f
+		};
+
+		return tag_size;
+	}
+
+	auto Renderer2D::parse_ansi_color(std::string_view value, glm::vec4& out) -> size_t {
+		if (!value.starts_with("\x1b["))
+			return std::string_view::npos;
+
+		const auto end = value.find('m', 2);
+		if (end == std::string_view::npos)
+			return std::string_view::npos;
+
+		const auto inner = value.substr(2, end - 2);
+
+		int codes[5]{};
+		size_t count = 0;
+
+		size_t begin = 0;
+
+		while (begin <= inner.size()) {
+			const size_t separator = inner.find(';', begin);
+			const size_t length =
+			    separator == std::string_view::npos
+			        ? inner.size() - begin
+					: separator - begin;
+
+			if (length == 0 || count >= std::size(codes))
+				return std::string_view::npos;
+
+			int number = 0;
+
+			for (size_t i = begin; i < begin + length; ++i) {
+				const char c = inner[i];
+
+				if (c < '0' || c > '9')
+					return std::string_view::npos;
+
+				number = number * 10 + (c - '0');
+
+				if (number > 255)
+					return std::string_view::npos;
+			}
+
+			codes[count++] = number;
+
+			if (separator == std::string_view::npos)
+				break;
+
+			begin = separator + 1;
+		}
+
+		if (count == 0)
+			return std::string_view::npos;
+
+		static constexpr glm::vec3 ansi_colors[16] = {
+			{ 0.00f, 0.00f, 0.00f },
+			{ 0.50f, 0.00f, 0.00f },
+			{ 0.00f, 0.50f, 0.00f },
+			{ 0.50f, 0.50f, 0.00f },
+			{ 0.00f, 0.00f, 0.50f },
+			{ 0.50f, 0.00f, 0.50f },
+			{ 0.00f, 0.50f, 0.50f },
+			{ 0.75f, 0.75f, 0.75f },
+
+			{ 0.50f, 0.50f, 0.50f },
+			{ 1.00f, 0.00f, 0.00f },
+			{ 0.00f, 1.00f, 0.00f },
+			{ 1.00f, 1.00f, 0.00f },
+			{ 0.00f, 0.00f, 1.00f },
+			{ 1.00f, 0.00f, 1.00f },
+			{ 0.00f, 1.00f, 1.00f },
+			{ 1.00f, 1.00f, 1.00f }
+		};
+
+		const int code = codes[0];
+
+		if (code >= 30 && code <= 37) {
+			out = glm::vec4(ansi_colors[code - 30], 1.0f);
+		} else if (code >= 90 && code <= 97) {
+			out = glm::vec4(ansi_colors[code - 90 + 8], 1.0f);
+		} else if (count >= 5 && (code == 38 || code == 48) && codes[1] == 2) {
+			out = {
+				static_cast<float>(codes[2]) / 255.0f,
+				static_cast<float>(codes[3]) / 255.0f,
+				static_cast<float>(codes[4]) / 255.0f,
+				1.0f
+			};
+		} else {
+			return std::string_view::npos;
+		}
+
+		return end + 1;
+	}
+
+	auto Renderer2D::parse_color_tag(std::string_view value, glm::vec4& out) -> size_t {
+		constexpr std::string_view prefix = "<col:";
+		constexpr std::string_view suffix = ">";
+
+		if (!value.starts_with(prefix))
+			return std::string_view::npos;
+
+		const auto end = value.find('>', prefix.size());
+		if (end == std::string_view::npos)
+			return std::string_view::npos;
+
+		const auto color = value.substr(prefix.size(), end - prefix.size());
+
+		if (parse_hex_color(color, out) == std::string_view::npos)
+			return std::string_view::npos;
+
+		return end + 1;
+	}
+
 } // namespace aby::eng
+

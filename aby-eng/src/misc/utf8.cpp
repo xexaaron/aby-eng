@@ -14,29 +14,29 @@ namespace aby::eng::utf8 {
 		const auto* p = reinterpret_cast<const unsigned char*>(m_Ptr);
 
 		if (p[0] < 0x80) {
-			return p[0];
+			return static_cast<codepoint>(p[0]);
 		}
 
 		if ((p[0] & 0xE0) == 0xC0) {
-			return (static_cast<codepoint>(p[0] & 0x1F) << 6) |
-			       static_cast<codepoint>(p[1] & 0x3F);
+			return static_cast<codepoint>((static_cast<char32_t>(p[0] & 0x1F) << 6) |
+			                              static_cast<char32_t>(p[1] & 0x3F));
 		}
 
 		if ((p[0] & 0xF0) == 0xE0) {
-			return (static_cast<codepoint>(p[0] & 0x0F) << 12) |
-			       (static_cast<codepoint>(p[1] & 0x3F) << 6) |
-			       static_cast<codepoint>(p[2] & 0x3F);
+			return static_cast<codepoint>((static_cast<char32_t>(p[0] & 0x0F) << 12) |
+			                              (static_cast<char32_t>(p[1] & 0x3F) << 6) |
+			                              static_cast<char32_t>(p[2] & 0x3F));
 		}
 
 		if ((p[0] & 0xF8) == 0xF0) {
-			return (static_cast<codepoint>(p[0] & 0x07) << 18) |
-			       (static_cast<codepoint>(p[1] & 0x3F) << 12) |
-			       (static_cast<codepoint>(p[2] & 0x3F) << 6) |
-			       static_cast<codepoint>(p[3] & 0x3F);
+			return static_cast<codepoint>((static_cast<char32_t>(p[0] & 0x07) << 18) |
+			                              (static_cast<char32_t>(p[1] & 0x3F) << 12) |
+			                              (static_cast<char32_t>(p[2] & 0x3F) << 6) |
+			                              static_cast<char32_t>(p[3] & 0x3F));
 		}
 
 		// Invalid UTF-8.
-		return 0xFFFD;
+		return static_cast<codepoint>(0xFFFD);
 	}
 
 	auto CodepointIterator::operator++() -> CodepointIterator& {
@@ -105,13 +105,13 @@ namespace aby::eng::utf8 {
 		return static_cast<size_t>(it - m_String.data());
 	}
 
-	auto Codepoints::operator[](size_t idx) -> char32_t {
+	auto Codepoints::operator[](size_t idx) -> codepoint {
 		auto it = begin();
 		std::advance(it, idx);
 		return *it;
 	}
 
-	auto Codepoints::operator[](size_t idx) const -> char32_t {
+	auto Codepoints::operator[](size_t idx) const -> codepoint {
 		auto it = begin();
 		std::advance(it, idx);
 		return *it;
@@ -143,33 +143,33 @@ namespace aby::eng::utf8 {
 
 	auto encode(std::string& str, std::span<const codepoint> cps) -> void {
 		for (auto cp : cps) {
-			if (cp <= 0x7F) {
+			if (static_cast<char32_t>(cp) <= 0x7F) {
 				str.push_back(static_cast<char>(cp));
-			} else if (cp <= 0x7FF) {
-				str.push_back(static_cast<char>(0xC0 | (cp >> 6)));
-				str.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-			} else if (cp <= 0xFFFF) {
-				str.push_back(static_cast<char>(0xE0 | (cp >> 12)));
-				str.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-				str.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+			} else if (static_cast<char32_t>(cp) <= 0x7FF) {
+				str.push_back(static_cast<char>(0xC0 | (static_cast<char32_t>(cp) >> 6)));
+				str.push_back(static_cast<char>(0x80 | (static_cast<char32_t>(cp) & 0x3F)));
+			} else if (static_cast<char32_t>(cp) <= 0xFFFF) {
+				str.push_back(static_cast<char>(0xE0 | (static_cast<char32_t>(cp) >> 12)));
+				str.push_back(static_cast<char>(0x80 | ((static_cast<char32_t>(cp) >> 6) & 0x3F)));
+				str.push_back(static_cast<char>(0x80 | (static_cast<char32_t>(cp) & 0x3F)));
 			} else {
-				str.push_back(static_cast<char>(0xF0 | (cp >> 18)));
-				str.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
-				str.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-				str.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+				str.push_back(static_cast<char>(0xF0 | (static_cast<char32_t>(cp) >> 18)));
+				str.push_back(static_cast<char>(0x80 | ((static_cast<char32_t>(cp) >> 12) & 0x3F)));
+				str.push_back(static_cast<char>(0x80 | ((static_cast<char32_t>(cp) >> 6) & 0x3F)));
+				str.push_back(static_cast<char>(0x80 | (static_cast<char32_t>(cp) & 0x3F)));
 			}
 		}
 	}
 
 	auto to_lower(utf8::codepoint cp) -> utf8::codepoint {
-		if (cp >= U'A' && cp <= U'Z')
-			return cp + (U'a' - U'A');
+		if (static_cast<char32_t>(cp) >= U'A' && static_cast<char32_t>(cp) <= U'Z')
+			return static_cast<codepoint>(static_cast<char32_t>(cp) + (U'a' - U'A'));
 		return cp;
 	}
 
 	auto to_upper(utf8::codepoint cp) -> utf8::codepoint {
-		if (cp >= U'a' && cp <= U'z')
-			return cp - (U'a' - U'A');
+		if (static_cast<char32_t>(cp) >= U'a' && static_cast<char32_t>(cp) <= U'z')
+			return static_cast<codepoint>(static_cast<char32_t>(cp) - (U'a' - U'A'));
 		return cp;
 	}
 

@@ -5,6 +5,9 @@
 
 namespace aby::eng {
 
+	/// @brief Time class mainly used for deltatime with easy conversion functions
+	/// @note  formatter {:ms} (milli) {:s} (sec) {:ns} (nano) {:us} (micro)
+	// 		   calls function then uses suffix ms, s, ns, μs
 	class ABY_API Time {
 	public:
 		explicit Time(std::chrono::milliseconds ms);
@@ -24,8 +27,6 @@ namespace aby::eng {
 
 namespace std {
 
-	// formatter {:ms} (milli) {:s} (sec) {:ns} (nano) {:us} (micro)
-	// calls function then uses suffix ms, s, ns, μs
 	template <>
 	struct formatter<aby::eng::Time, char> {
 	private:
