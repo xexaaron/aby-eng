@@ -10,14 +10,57 @@
 #include <aby-eng/ui/containers/container.hpp>
 #include <aby-eng/ui/containers/grid.hpp>
 #include <aby-eng/ui/image.hpp>
+#include <aby-eng/ui/window.hpp>
 #include <algorithm>
+
+// The Current UI hierarcy
+//
+// Element
+//	- Canvas
+//  - Container
+//		- HContainer
+//		- VContainer
+//		- AspectRatioBox
+//		- Grid
+//  - Button
+//  - Image
+//
+// The Layout
+//	Everything is in contained in the canvas/nested in containers that ultimately belong to the canvas
+//
+// How it needs to develop to allow for advanced ui features
+//
+// Element
+// 	- Window
+//  - Canvas
+//  - Container
+// 		- HContainer
+//		- VContainer
+// 		- AspectRatioBox
+//		- ScrollBox
+//		- Grid
+//	- Button
+//	- Image
+//
+// The layout
+//		A Core window class that represents the inital system window
+//		This window allows docking of elements
+//
+//		Everything is owned by A window
+//  	A window owns a canvas
+//		The canvas owns elements
+//
+//		When a window is dragged out of its bounds it splits into a new system window
+//		When a window is dragged into the core window onto a dockspace it becomes a child of
+//		the core window
+//
+//
 
 namespace aby::eng::sandbox {
 
 	class TestObject : public eng::Object {
 	public:
 		auto on_create() -> void override {
-			m_EmojiFont = Font::create("NotoColorEmoji-Regular.ttf", 12.f, false);
 		}
 
 		auto on_render() -> void override {
@@ -163,27 +206,14 @@ namespace aby::eng::sandbox {
 			                                     ui::Style(Material2D({ 0.3f, 0.3f, 0.3f, 1.f }),
 												           ui::Border(2.f, { 0.15f, 0.15f, 0.15f, 1.f }))));
 
-			bool swap = false;
-			Text txt("foOéööøΩЖ世界😀🚀ñÑüÜß", m_Font);
-			log_inf("base:        {}", txt);
-			log_inf("lower:       {}", txt.to_lower());
-			log_inf("upper:       {}", txt.to_upper());
-			log_inf("transformed: {}", txt.transform([&swap](utf8::codepoint c) -> utf8::codepoint {
-				utf8::codepoint out;
-				if (swap) {
-					out = utf8::to_lower(c);
-				} else {
-					out = utf8::to_upper(c);
-				}
-				swap = !swap;
-				return out;
-			}));
-
 			aspect->add_child(button);
 			canvas->add_child(aspect);
 			canvas->add_child(grid);
-
 			App::add_obj(canvas);
+
+			auto window = ui::Window::create(Text("window test", m_Font), Rect2D({ 0, 0 }, { 800, 600 }));
+
+			App::add_obj(window);
 			App::add_obj(std::make_shared<TestObject>());
 		}
 

@@ -4,6 +4,7 @@
 #include "core/entry.hpp"
 #include "core/renderer.hpp"
 #include "log.hpp"
+#include "misc/registry.hpp"
 
 #include <aby-win/backend/glfw/glfw-window.hpp>
 #include <aby-win/common.hpp>
@@ -82,16 +83,18 @@ namespace aby::eng {
 
 		// TODO: Temporary arg handling
 #ifdef __linux__
-		rhi::EWindow window_backend = rhi::EWindow::wayland;
+		rhi::EWindow window_backend = Registry::get<"rhi-window-backend", false>();
+		Registry::set("app-flag-render-doc", false);
 		for (int32_t i = 0; i < info.argc; i++) {
 			if (std::strcmp(info.argv[i], "--render-doc") == 0) {
-				window_backend = rhi::EWindow::x11;
+				window_backend = Registry::get<"rhi-window-backend", true>();
+				Registry::set("app-flag-render-doc", true);
 			}
 		}
 #endif
 
 		window_cfg.set_name(info.name)
-		    .set_backends(win::EWindow::sdl, win::ERenderBackend::vulkan)
+		    .set_backends(Registry::get<"win-backend">(), Registry::get<"win-render-backend">())
 		    .set_size(800, 600)
 		    .set_theme(win::ETheme::automatic)
 		    .set_resizable(true)
@@ -105,7 +108,7 @@ namespace aby::eng {
 		m_Context = &rhi::Context::get();
 
 		rhi::ContextParams ctx_cfg{
-			.renderer_backend = rhi::ERenderer::vulkan,
+			.renderer_backend = Registry::get<"rhi-backend">(),
 #ifdef __linux__
 			.window_backend = window_backend,
 #else
@@ -116,13 +119,11 @@ namespace aby::eng {
 		};
 
 #ifdef __linux__
-		if (window_cfg.window_backend == win::EWindow::sdl) {
-			ctx_cfg.wl_get_size_cb = [](uint32_t* w, uint32_t* h) {
-				auto [x, y] = m_Window->size();
-				*w          = x;
-				*h          = y;
-			};
-		}
+		ctx_cfg.wl_get_size_cb = [](uint32_t* w, uint32_t* h) {
+			auto [x, y] = m_Window->size();
+			*w          = x;
+			*h          = y;
+		};
 #endif
 
 		m_Context->set_interface<RHILoggerInterface>();
@@ -142,7 +143,9 @@ namespace aby::eng {
 
 		m_Window->add_listener([](win::Event& event) -> bool {
 			for (auto& object : m_Objects) {
-				object->on_event(event);
+				if (object->on_event(event)) {
+					return true;
+				}
 			}
 			return false;
 		});

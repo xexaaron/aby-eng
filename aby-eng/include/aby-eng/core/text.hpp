@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "misc/font.hpp"
 #include "misc/utf8.hpp"
+#include "misc/uuid.hpp"
 
 #include <string>
 

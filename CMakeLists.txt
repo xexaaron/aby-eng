@@ -16,12 +16,6 @@ add_subdirectory(${VENDOR_DIR}/aby-win)
 set(GLM_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 add_subdirectory(${VENDOR_DIR}/glm)
 
-#     cmake -B build -D FT_REQUIRE_ZLIB=TRUE \
-#                    -D FT_REQUIRE_BZIP2=TRUE \
-#                    -D FT_REQUIRE_PNG=TRUE \
-#                    -D FT_REQUIRE_HARFBUZZ=TRUE \
-#                    -D FT_REQUIRE_BROTLI=TRUE [...]
-
 set(FT_REQUIRE_ZLIB TRUE CACHE BOOL "" FORCE)
 set(FT_REQUIRE_BZIP2 TRUE CACHE BOOL "" FORCE)
 set(FT_REQUIRE_PNG TRUE CACHE BOOL "" FORCE)

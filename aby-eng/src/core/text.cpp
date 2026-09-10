@@ -3,19 +3,18 @@
 #include "log.hpp"
 #include "misc/utf8.hpp"
 
-#include <algorithm>
-#include <string>
+#include <libintl.h>
 
 namespace aby::eng {
 
 	Text::Text(const std::string& data, FontPtr font) :
 	    m_Font(font),
-	    m_Data(data) {
+	    m_Data(gettext(data.c_str())) {
 	}
 
 	Text::Text(std::span<utf8::codepoint> codepoints, FontPtr font) :
 	    m_Font(font),
-	    m_Data(utf8::encode(codepoints)) {
+	    m_Data(gettext(utf8::encode(codepoints).c_str())) {
 	}
 
 	auto Text::font() const -> FontPtr {
