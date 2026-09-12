@@ -1,5 +1,6 @@
 #pragma once
 #include "common.hpp"
+#include "draw-cmd.hpp"
 #include "misc/font.hpp"
 #include "misc/types.hpp"
 
@@ -32,6 +33,24 @@ namespace aby::eng {
 		* @note format protocol: ansi esc codes & <col:#RRGGBB></col> tags (currently)
 		*/
 		static auto textf(const glm::fvec2& pos, FontPtr font, const Text2D& text) -> void;
+
+		/**
+		* @brief Submit a draw cmd to the renderers render pass
+		* @param cmd the rhi draw cmd to upload.
+		*/
+		static auto submit(rhi::DrawCmd& cmd) -> void;
+
+		/**
+		* @brief Set the scissor flag
+		* @param enable [true | false]
+		*/
+		static auto enable_scissor(bool enable) -> void;
+		/**
+		* @brief Set the scissor region
+		* @param min The min coords of the rectangle
+		* @param max The max coords of the rectangle
+		*/
+		static auto set_scissor(glm::ivec2 min, glm::ivec2 max) -> void;
 	private:
 		static auto init() -> bool;
 		static auto deinit() -> void;

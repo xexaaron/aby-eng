@@ -32,8 +32,8 @@ namespace aby::eng {
 			               .add_shader("ui.frag")
 			               .add_push_constant<glm::mat4>("projection")
 			               .add_vertex_input<&Vertex2D::pos>(EFormat::rg_f32)
-			               .add_vertex_input<&Vertex2D::uv>(EFormat::rg_f32)
 			               .add_vertex_input<&Vertex2D::color>(EFormat::rgba_f32)
+			               .add_vertex_input<&Vertex2D::uv>(EFormat::rg_f32)
 			               .add_vertex_input<&Vertex2D::tex>(EFormat::r_u32)
 			               .add_color_attachment(Texture::create_render_target(4, EAntiAliasing::msaa4x), true)
 			               .set_topology(ETopology::triangle_list)
@@ -70,10 +70,10 @@ namespace aby::eng {
 		// uv = { min_u, min_v, max_u, max_v }
 
 		Vertex2D vertices[4] = {
-			{               { pos.x, pos.y }, { uv.x, uv.y }, color, tex }, // top-left
-			{        { pos.x + sz.x, pos.y }, { uv.z, uv.y }, color, tex }, // top-right
-			{ { pos.x + sz.x, pos.y + sz.y }, { uv.z, uv.w }, color, tex }, // bottom-right
-			{        { pos.x, pos.y + sz.y }, { uv.x, uv.w }, color, tex }  // bottom-left
+			{               { pos.x, pos.y }, color, { uv.x, uv.y }, tex }, // top-left
+			{        { pos.x + sz.x, pos.y }, color, { uv.z, uv.y }, tex }, // top-right
+			{ { pos.x + sz.x, pos.y + sz.y }, color, { uv.z, uv.w }, tex }, // bottom-right
+			{        { pos.x, pos.y + sz.y }, color, { uv.x, uv.w }, tex }  // bottom-left
 		};
 
 		uint32_t indices[6] = {
@@ -109,23 +109,23 @@ namespace aby::eng {
 
 			Vertex2D vertices[4] = {
 				{                                                 { x, y },
-				 { g.uv_min.x, g.uv_min.y },
 				 text.tint,
+				 { g.uv_min.x, g.uv_min.y },
 				 tex },
 
 				{                         { x + g.size.x * text.scale, y },
-				 { g.uv_max.x, g.uv_min.y },
 				 text.tint,
+				 { g.uv_max.x, g.uv_min.y },
 				 tex },
 
 				{ { x + g.size.x * text.scale, y + g.size.y * text.scale },
-				 { g.uv_max.x, g.uv_max.y },
 				 text.tint,
+				 { g.uv_max.x, g.uv_max.y },
 				 tex },
 
 				{                         { x, y + g.size.y * text.scale },
-				 { g.uv_min.x, g.uv_max.y },
 				 text.tint,
+				 { g.uv_min.x, g.uv_max.y },
 				 tex }
 			};
 
@@ -148,6 +148,18 @@ namespace aby::eng {
 
 	auto Renderer2D::textf(const glm::fvec2& pos, FontPtr font, const Text2D& text) -> void {
 		expect(false, "unimplemented");
+	}
+
+	auto Renderer2D::submit(rhi::DrawCmd& cmd) -> void {
+		m_Pass->submit(cmd);
+	}
+
+	auto Renderer2D::enable_scissor(bool enable) -> void {
+		m_Pass->set_scissor_enable(enable);
+	}
+
+	auto Renderer2D::set_scissor(glm::ivec2 min, glm::ivec2 max) -> void {
+		m_Pass->set_scissor_region(min, max);
 	}
 
 	auto Renderer2D::deinit() -> void {
