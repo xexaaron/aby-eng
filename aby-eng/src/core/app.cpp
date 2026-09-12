@@ -90,15 +90,28 @@ namespace aby::eng {
 
 		EngineArgs args{};
 
-		argparse::ArgumentParser parser(info.name, info.version);
-		parser.add_argument("-render-doc")
+		std::atexit([]() {
+			puts("\n");
+		});
+
+		argparse::ArgumentParser parser(
+		    fs::path(info.argv[0]).filename().string(),
+		    info.version,
+		    argparse::default_arguments::all,
+		    true,
+		    std::cout);
+
+		parser.add_group("Application arguments");
+
+		// Give the entry point the opportunity to add arguments
+		EntryPoint::get()->on_cmdl(parser);
+
+		parser.add_group("Engine arguments");
+		parser.add_argument("--render-doc")
 		    .flag()
 		    .help("Use render doc compatible native window (eg. X11 > Wayland for vulkan)")
 		    .default_value(false)
 		    .store_into(args.render_doc);
-
-		// Give the entry point the opportunity to add arguments
-		EntryPoint::get()->on_cmdl(parser);
 
 		try {
 			parser.parse_known_args(info.argc, info.argv);

@@ -36,6 +36,7 @@ namespace aby::eng {
 		* @brief Callback to have the application register arguments for parsing.
 		* @param parser The command line parser to add arguments to.
 		* @note Use @c parser.store_into(...) to store parsed values.
+		* @note Optionally you can set the epilog or description for the application.
 		* @warning Do not call @c parse or @c parse_known_args on the parser. 
 		*/
 		virtual auto on_cmdl(argparse::ArgumentParser& parser) -> void;

@@ -9,6 +9,9 @@ namespace aby::eng::editor {
 		                  .argv    = argv }) {
 	}
 
+	auto EntryPoint::on_cmdl(argparse::ArgumentParser& parser) -> void {
+	}
+
 	auto EntryPoint::on_exec() -> void {
 	}
 
