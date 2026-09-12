@@ -48,6 +48,13 @@ namespace aby::eng {
 		virtual auto on_exec() -> void = 0;
 
 		/**
+		* @brief Callback for after all objects have been created 
+		* @note Called after systems have been initialized right before the main loop. 
+		* 		Different from @c on_exec which is called before @c Object::on_create initialization 
+		*/
+		virtual auto on_create() -> void;
+
+		/**
 		 * @brief Callback for when the application exits
 		 * @note Called after the window/render loop has exited before app deinitalization
 		 */

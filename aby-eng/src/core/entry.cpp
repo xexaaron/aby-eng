@@ -29,7 +29,7 @@ namespace aby::eng {
 #ifdef _WIN32
 		auto win32_exc_filter = [](EXCEPTION_POINTERS* info) -> LONG {
 			Logger::shutdown(); // flush the multithreaded logger so that we get err's and asserts before exiting
-			return EXCEPTION_EXECUTE_HANDLER;
+			return EXCEPTIUTE_HANDLER;
 		};
 		SetUnhandledExceptionFilter(win32_exc_filter);
 #endif
@@ -69,6 +69,9 @@ namespace aby::eng {
 	}
 
 	auto EntryPoint::on_cmdl(argparse::ArgumentParser& parser) -> void {
+	}
+
+	auto EntryPoint::on_create() -> void {
 	}
 
 } // namespace aby::eng

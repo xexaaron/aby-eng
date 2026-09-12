@@ -15,6 +15,10 @@
 #include <unordered_map>
 #include <vector>
 
+#ifdef _WIN32
+#	include <Windows.h>
+#endif
+
 namespace aby::eng::detail {
 
 	struct FaceGuard {
@@ -167,6 +171,25 @@ namespace aby::eng {
 
 	auto Font::set(FontPtr font) -> void {
 		s_CurrentFont = font;
+	}
+
+	auto Font::sys_path() -> fs::path {
+#ifdef __linux__
+		// TODO: Use Fontconfig to query fonts
+		return fs::path("/usr/share/fonts/TTF");
+#elif defined(_WIN32)
+		char windir[MAX_PATH];
+		UINT len = GetWindowsDirectoryA(windir, MAX_PATH);
+		if (len > 0 && len < MAX_PATH) {
+			return fs::path(windir) / "Fonts";
+		}
+		log_err("[win32] failed to get the windows directory");
+		return {};
+#elif defined(__APPLE__)
+		return fs::path("/System/Library/Fonts");
+#else
+#	error "unsupported platform"
+#endif
 	}
 
 	auto Font::measure(std::string_view text) const -> glm::fvec2 {

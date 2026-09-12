@@ -212,6 +212,8 @@ namespace aby::eng {
 		using clock     = std::chrono::steady_clock;
 		auto last_frame = clock::now();
 
+		EntryPoint::get()->on_create();
+
 		while (!window.should_close()) {
 			window.poll();
 

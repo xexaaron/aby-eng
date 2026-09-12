@@ -180,9 +180,6 @@ namespace aby::eng {
 		auto [w, h]     = App::window()->size();
 		auto projection = create_2d_projection(w, h);
 
-		m_Vertices->upload();
-		m_Indices->upload();
-
 		m_Pass->push_constant("projection", projection);
 
 		if (m_Vertices->count() > 0) {

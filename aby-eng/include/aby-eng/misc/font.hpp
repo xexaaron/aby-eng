@@ -55,6 +55,7 @@ namespace aby::eng {
 
 		static auto get() -> FontPtr;
 		static auto set(FontPtr font) -> void;
+		static auto sys_path() -> fs::path;
 
 		auto path() const -> const fs::path&;
 		auto texture() -> rhi::TexturePtr;
