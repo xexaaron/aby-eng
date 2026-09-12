@@ -12,6 +12,10 @@
 
 namespace aby::eng {
 
+	EntryPoint::EntryPoint(const AppInfo& app_info) :
+	    m_AppInfo(app_info) {
+	}
+
 	auto EntryPoint::get() -> ref<EntryPoint> {
 		return m_EntryPoint;
 	}
@@ -52,9 +56,7 @@ namespace aby::eng {
 			return 1;
 		}
 
-		auto& app_info = entry_point->init();
-
-		if (!App::init(app_info)) {
+		if (!App::init(m_AppInfo)) {
 			log_err("[eng] failed to initialize the app");
 			return 1;
 		}
@@ -64,6 +66,9 @@ namespace aby::eng {
 		App::deinit();
 
 		return 0;
+	}
+
+	auto EntryPoint::on_cmdl(argparse::ArgumentParser& parser) -> void {
 	}
 
 } // namespace aby::eng

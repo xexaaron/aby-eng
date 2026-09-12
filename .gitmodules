@@ -13,3 +13,6 @@
 [submodule "vendor/RmlUi"]
 	path = vendor/RmlUi
 	url = https://github.com/mikke89/RmlUi.git
+[submodule "vendor/argparse"]
+	path = vendor/argparse
+	url = https://github.com/p-ranav/argparse

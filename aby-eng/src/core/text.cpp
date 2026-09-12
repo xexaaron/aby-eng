@@ -3,22 +3,14 @@
 #include "log.hpp"
 #include "misc/utf8.hpp"
 
-#include <libintl.h>
-
 namespace aby::eng {
 
-	Text::Text(const std::string& data, FontPtr font) :
-	    m_Font(font),
-	    m_Data(gettext(data.c_str())) {
+	Text::Text(const std::string& data) :
+	    m_Data(data) {
 	}
 
-	Text::Text(std::span<utf8::codepoint> codepoints, FontPtr font) :
-	    m_Font(font),
-	    m_Data(gettext(utf8::encode(codepoints).c_str())) {
-	}
-
-	auto Text::font() const -> FontPtr {
-		return m_Font;
+	Text::Text(std::span<utf8::codepoint> codepoints) :
+	    m_Data(utf8::encode(codepoints)) {
 	}
 
 	auto Text::data() const -> const std::string& {
@@ -185,18 +177,6 @@ namespace aby::eng {
 		return utf8::codepoints(m_Data).size();
 	}
 
-	auto Text::size() const -> glm::fvec2 {
-		return m_Font->measure(m_Data);
-	}
-
-	auto Text::height() const -> float {
-		return m_Font->measure_height(m_Data);
-	}
-
-	auto Text::width() const -> float {
-		return m_Font->measure_width(m_Data);
-	}
-
 	auto Text::empty() const -> bool {
 		return m_Data.empty();
 	}
@@ -247,10 +227,6 @@ namespace aby::eng {
 		const auto first = cps.byte_offset(idx);
 		const auto last  = cps.byte_offset(idx + 1);
 		m_Data.replace(first, last - first, utf8::encode(cp));
-	}
-
-	auto Text::set_font(FontPtr font) -> void {
-		m_Font = font;
 	}
 
 	auto Text::operator==(const Text& other) const -> bool {

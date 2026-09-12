@@ -1,0 +1,55 @@
+// The Current UI hierarcy
+//
+// Element
+//	- Canvas
+//  - Container
+//		- HContainer
+//		- VContainer
+//		- AspectRatioBox
+//		- Grid
+//  - Button
+//  - Image
+//
+// The Layout
+//	Everything is in contained in the canvas/nested in containers that ultimately belong to the canvas
+//
+// How it needs to develop to allow for advanced ui features
+//
+// Element
+// 	- Window
+//  - Canvas
+//  - Container
+// 		- HContainer
+//		- VContainer
+// 		- AspectRatioBox
+//		- ScrollBox
+//		- Grid
+//	- Button
+//	- Image
+//
+// The layout
+//		A Core window class that represents the inital system window
+//		This window allows docking of elements
+//
+//		Everything is owned by A window
+//  	A window owns a canvas
+//		The canvas owns elements
+//
+//		When a window is dragged out of its bounds it splits into a new system window
+//		When a window is dragged into the core window onto a dockspace it becomes a child of
+//		the core window
+//
+//
+
+
+/**
+* What a UI script could look like:
+* 	
+* 	Canvas((hex | [r,g,b,a] | "style name"))
+* 		- HContainer((transform | size), (direction), (padding), (spacing), (border), (stretch))
+* 			- ...
+* 		- Grid((transform | size), (((rows), (cols)) | rowsXcols))
+* 			- <fill | (x, y)> Image((transform | size), "texture.png")
+* 		- Button((transform | size), Style(...))
+* 			- <on_click>    
+*/

@@ -10,9 +10,10 @@
 namespace aby::eng {
 
 	struct AppInfo {
-		std::string name = "";
-		i32 argc         = 0;
-		char** argv      = nullptr;
+		std::string name    = "";
+		std::string version = "1.0";
+		i32 argc            = 0;
+		char** argv         = nullptr;
 	};
 
 	enum class EAppState {

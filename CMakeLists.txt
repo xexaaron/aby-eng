@@ -23,6 +23,10 @@ set(FT_REQUIRE_HARFBUZZ TRUE CACHE BOOL "" FORCE)
 set(FT_REQUIRE_BROTLI TRUE CACHE BOOL "" FORCE)
 add_subdirectory(${VENDOR_DIR}/freetype)
 
+add_subdirectory(${VENDOR_DIR}/RmlUi)
+
+add_subdirectory(${VENDOR_DIR}/argparse)
+
 set_target_properties(aby-win PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
@@ -43,5 +47,15 @@ set_target_properties(glm PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
 
+set_target_properties(rmlui PROPERTIES
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+)
+
+set_target_properties(argparse PROPERTIES
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+)
+
+
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/aby-eng)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sandbox)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/editor)

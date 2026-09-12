@@ -34,7 +34,6 @@ add_library(${PROJECT_NAME} SHARED
     include/aby-eng/ui/containers/grid.hpp
     include/aby-eng/ui/containers/aspectratiobox.hpp
 
-
     src/common.cpp
     src/log.cpp
     
@@ -60,7 +59,6 @@ add_library(${PROJECT_NAME} SHARED
     src/ui/containers/container.cpp
     src/ui/containers/grid.cpp
     src/ui/containers/aspectratiobox.cpp
-
 )
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
@@ -77,6 +75,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     aby-rhi::aby-rhi
     glm::glm
     freetype
+    argparse::argparse
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

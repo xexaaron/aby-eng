@@ -62,8 +62,8 @@ namespace aby::eng {
 
 	struct ABY_API Vertex2D {
 		glm::fvec2 pos   = { 0.f, 0.f };
-		glm::fvec2 uv    = { 0.f, 0.f };
 		glm::fvec4 color = { 1.f, 1.f, 1.f, 1.f };
+		glm::fvec2 uv    = { 0.f, 0.f };
 		uint32_t tex     = 0; // tex id 0 is valid, it will be a 1x1 white texture
 	};
 

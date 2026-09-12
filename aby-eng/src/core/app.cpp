@@ -9,7 +9,10 @@
 #include <aby-win/backend/glfw/glfw-window.hpp>
 #include <aby-win/common.hpp>
 #include <aby-win/window.hpp>
+#include <argparse/argparse.hpp>
 #include <chrono>
+#include <exception>
+#include <ranges>
 
 namespace aby::eng {
 
@@ -77,21 +80,40 @@ namespace aby::eng {
 
 namespace aby::eng {
 
+	struct EngineArgs {
+		bool render_doc = false;
+	};
+
 	auto App::init(const AppInfo& info) -> bool {
 		win::ILogger::set<WINLoggerInterface>();
 		win::Config window_cfg;
 
-		// TODO: Temporary arg handling
-#ifdef __linux__
-		rhi::EWindow window_backend = Registry::get<"rhi-window-backend", false>();
-		Registry::set("app-flag-render-doc", false);
-		for (int32_t i = 0; i < info.argc; i++) {
-			if (std::strcmp(info.argv[i], "--render-doc") == 0) {
-				window_backend = Registry::get<"rhi-window-backend", true>();
-				Registry::set("app-flag-render-doc", true);
+		EngineArgs args{};
+
+		argparse::ArgumentParser parser(info.name, info.version);
+		parser.add_argument("-render-doc")
+		    .flag()
+		    .help("Use render doc compatible native window (eg. X11 > Wayland for vulkan)")
+		    .default_value(false)
+		    .store_into(args.render_doc);
+
+		// Give the entry point the opportunity to add arguments
+		EntryPoint::get()->on_cmdl(parser);
+
+		try {
+			parser.parse_known_args(info.argc, info.argv);
+		} catch (std::exception& exc) {
+			// throws on invalid args, but we want to reuse these for
+			if (exc.what()) {
+				log_dev("[argparse] {}", exc.what());
 			}
 		}
-#endif
+
+		rhi::EWindow window_backend = Registry::get<"rhi-window-backend", false>();
+		Registry::set("app-flag-render-doc", args.render_doc);
+		if (args.render_doc) {
+			window_backend = Registry::get<"rhi-window-backend", true>();
+		}
 
 		window_cfg.set_name(info.name)
 		    .set_backends(Registry::get<"win-backend">(), Registry::get<"win-render-backend">())
@@ -101,7 +123,7 @@ namespace aby::eng {
 		    .set_focused(true)
 		    .set_visible(true)
 		    .set_visible(true)
-		    .set_render_doc(window_backend == rhi::EWindow::x11);
+		    .set_render_doc(args.render_doc);
 
 		m_Window = win::Window::create(window_cfg);
 

@@ -53,6 +53,9 @@ namespace aby::eng {
 		static auto create(const fs::path& rel_path, float px_size = 12.f, bool system = false) -> FontPtr;
 		~Font();
 
+		static auto get() -> FontPtr;
+		static auto set(FontPtr font) -> void;
+
 		auto path() const -> const fs::path&;
 		auto texture() -> rhi::TexturePtr;
 		auto pixel_size() const -> float;
@@ -72,6 +75,8 @@ namespace aby::eng {
 		FontData m_Data;
 		fs::path m_Path;
 		std::unordered_map<utf8::codepoint, Glyph> m_Glyphs;
+	private:
+		static inline FontPtr s_CurrentFont = nullptr;
 	};
 
 } // namespace aby::eng

@@ -161,6 +161,14 @@ namespace aby::eng {
 	Font::~Font() {
 	}
 
+	auto Font::get() -> FontPtr {
+		return s_CurrentFont;
+	}
+
+	auto Font::set(FontPtr font) -> void {
+		s_CurrentFont = font;
+	}
+
 	auto Font::measure(std::string_view text) const -> glm::fvec2 {
 		if (text.empty()) {
 			return { 0.0f, 0.0f };

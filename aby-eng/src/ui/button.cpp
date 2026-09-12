@@ -86,14 +86,16 @@ namespace aby::eng::ui {
 			Renderer2D::quad(transform, Material2D(border.color));
 		}
 
+		auto font = Font::get();
+
 		if (!m_Text.empty()) {
 			auto center  = rect.center();
-			auto size    = m_Text.size();
+			auto size    = font->measure(m_Text.view());
 			size        /= 2;
 			center      -= size;
 
 			Text2D txt(m_Text.view());
-			Renderer2D::text(center, m_Text.font(), txt);
+			Renderer2D::text(center, font, txt);
 		}
 
 		Element::on_render();

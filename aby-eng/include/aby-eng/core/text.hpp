@@ -12,8 +12,8 @@ namespace aby::eng {
 	/// @brief UTF-8 aware text class
 	class ABY_API Text {
 	public:
-		Text(const std::string& data, FontPtr font);
-		Text(std::span<utf8::codepoint> codepoints, FontPtr font);
+		explicit Text(const std::string& data);
+		explicit Text(std::span<utf8::codepoint> codepoints);
 
 		auto append(std::string_view str) -> void;
 		auto append(const Text& other) -> void;
@@ -44,14 +44,10 @@ namespace aby::eng {
 		auto ends_with(utf8::codepoint cp) const -> bool;
 		auto ends_with(const Text& text) const -> bool;
 
-		auto font() const -> FontPtr;
 		auto data() const -> const std::string&;
 		auto data() -> std::string&;
 		auto bytes() const -> size_t;
 		auto length() const -> size_t;
-		auto size() const -> glm::fvec2;
-		auto height() const -> float;
-		auto width() const -> float;
 		auto empty() const -> bool;
 		auto view() const -> std::string_view;
 
@@ -65,7 +61,6 @@ namespace aby::eng {
 		auto front() const -> utf8::codepoint;
 
 		auto set(size_t idx, utf8::codepoint cp) -> void;
-		auto set_font(FontPtr font) -> void;
 
 		auto operator==(const Text& other) const -> bool;
 		auto operator==(std::string_view other) const -> bool;
@@ -74,7 +69,6 @@ namespace aby::eng {
 		auto operator[](size_t idx) const -> utf8::codepoint;
 		auto operator[](size_t idx) -> utf8::codepoint;
 	private:
-		FontPtr m_Font;
 		std::string m_Data;
 	};
 
