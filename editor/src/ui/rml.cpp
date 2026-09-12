@@ -32,6 +32,22 @@ namespace aby::eng::editor::rml {
 		return std::make_shared<Renderer>(window_size);
 	}
 
+	auto Renderer::load(const std::filesystem::path& rel_path) -> bool {
+		auto rel = fs::path("resource") / "ui" / rel_path;
+		auto abs = rhi::Context::get().file_io()->path(rel);
+		auto doc = m_Context->LoadDocument(abs);
+
+		if (!doc) {
+			log_err("[rml] failed to load document: {}", rel_path);
+			return false;
+		}
+
+		doc->Show();
+		m_Documents.push_back(doc);
+
+		return true;
+	}
+
 	auto Renderer::on_create() -> void {
 		Rml::SetRenderInterface(&m_Interface);
 		if (!Rml::Initialise()) {
@@ -40,6 +56,8 @@ namespace aby::eng::editor::rml {
 		}
 		m_Context = Rml::CreateContext("main", Rml::Vector2i(m_WindowSize.x, m_WindowSize.y));
 		log_dev("[rml] initialized");
+
+		Rml::LoadFontFace(Font::sys_path() / "Vera.ttf");
 	}
 
 	auto Renderer::on_tick(const Time& dt) -> void {
@@ -58,6 +76,7 @@ namespace aby::eng::editor::rml {
 			dsp.dispatch(&Renderer::on_key_pressed, this);
 			dsp.dispatch(&Renderer::on_key_released, this);
 			dsp.dispatch(&Renderer::on_key_typed, this);
+			dsp.dispatch(&Renderer::on_window_resized, this);
 		}
 		return false;
 	}
@@ -112,6 +131,11 @@ namespace aby::eng::editor::rml {
 		return false;
 	}
 
+	auto Renderer::on_window_resized(win::WindowResizedEvent& event) -> bool {
+		m_Context->SetDimensions(Rml::Vector2i(event->width, event->height));
+		return false;
+	}
+
 } // namespace aby::eng::editor::rml
 
 namespace aby::eng::editor::rml {
@@ -142,14 +166,14 @@ namespace aby::eng::editor::rml {
 			ibuff->push(static_cast<uint32_t>(index));
 		}
 
-		auto* cmd = new Geometry{ rhi::DrawCmd(vbuff, ibuff, 1), false };
+		auto* geom = new Geometry{ rhi::DrawCmd(vbuff, ibuff, 1), false };
 
-		return reinterpret_cast<uintptr_t>(cmd);
+		return reinterpret_cast<uintptr_t>(geom);
 	}
 
 	auto RenderInterface::RenderGeometry(Rml::CompiledGeometryHandle geometry, Rml::Vector2f translation, Rml::TextureHandle texture) -> void {
 		auto* geom = reinterpret_cast<Geometry*>(geometry);
-		if (!geom->is_texture_set) {
+		if (!geom->is_texture_set && texture != 0) {
 			geom->cmd.vbuff()->for_each<Vertex2D>([texture = texture, translation = translation](Vertex2D* v) {
 				auto* tex  = reinterpret_cast<rhi::Texture*>(texture);
 				v->tex     = tex->id();

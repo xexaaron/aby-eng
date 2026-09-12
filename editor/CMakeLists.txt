@@ -35,3 +35,12 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 set_target_properties(${PROJECT_NAME} PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/resource
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource
+      
+    COMMENT "[aby:editor] Copying resources"
+)
+

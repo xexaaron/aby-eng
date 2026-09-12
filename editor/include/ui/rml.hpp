@@ -1,5 +1,7 @@
 #pragma once
+#include "RmlUi/Core/ElementDocument.h"
 #include "common.hpp"
+#include "event.hpp"
 
 #include <RmlUi/Core.h>
 #include <aby-eng/core/object.hpp>
@@ -25,6 +27,13 @@ namespace aby::eng::editor::rml {
 
 		static auto create(glm::uvec2 window_size) -> ref<Renderer>;
 
+		/**
+		* @brief Load a .rml document into the window
+		* @param rel_path Path relative to the resource/ui directory
+		* @return true if successful, otherwise false
+		*/
+		auto load(const std::filesystem::path& rel_path) -> bool;
+
 		auto on_create() -> void override;
 		auto on_tick(const Time& dt) -> void override;
 		auto on_event(win::Event& event) -> bool override;
@@ -39,10 +48,12 @@ namespace aby::eng::editor::rml {
 		auto on_key_pressed(win::KeyPressedEvent& event) -> bool;
 		auto on_key_released(win::KeyReleasedEvent& event) -> bool;
 		auto on_key_typed(win::KeyTypedEvent& event) -> bool;
+		auto on_window_resized(win::WindowResizedEvent& event) -> bool;
 	private:
 		RenderInterface m_Interface;
 		Rml::Context* m_Context;
 		glm::uvec2 m_WindowSize;
+		std::vector<Rml::ElementDocument*> m_Documents;
 	};
 
 } // namespace aby::eng::editor::rml
