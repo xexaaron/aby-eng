@@ -8,16 +8,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 
 add_executable(${PROJECT_NAME}
-    include/ui/rml.hpp
     include/entry_point.hpp
 
     src/main.cpp
     src/entry_point.cpp
-
-    src/ui/rml.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE include)
+target_include_directories(${PROJECT_NAME}
+PRIVATE
+    include
+)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     aby-eng::aby-eng
@@ -34,13 +34,5 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-)
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/resource
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource
-      
-    COMMENT "[aby:editor] Copying resources"
 )
 

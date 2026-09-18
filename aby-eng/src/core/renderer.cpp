@@ -1,9 +1,12 @@
 #include "core/renderer.hpp"
 
+#include "common-enums.hpp"
 #include "core/app.hpp"
 #include "log.hpp"
+#include "misc/shaders/ui_shader.inl"
 #include "misc/utf8.hpp"
 
+#include <cmath>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <ranges>
 #include <sstream>
@@ -28,8 +31,8 @@ namespace aby::eng {
 		{ // Render pass 2D
 			using namespace aby::rhi;
 			auto rpb = rhi::RenderPassBuilder::create();
-			m_Pass   = rpb->add_shader("ui.vert")
-			               .add_shader("ui.frag")
+			m_Pass   = rpb->add_shader(shader::ui::NAME, shader::ui::VERTEX, EShader::vert)
+			               .add_shader(shader::ui::NAME, shader::ui::FRAGMENT, EShader::frag)
 			               .add_push_constant<glm::mat4>("projection")
 			               .add_vertex_input<&Vertex2D::pos>(EFormat::rg_f32)
 			               .add_vertex_input<&Vertex2D::color>(EFormat::rgba_f32)
@@ -150,7 +153,7 @@ namespace aby::eng {
 		expect(false, "unimplemented");
 	}
 
-	auto Renderer2D::submit(rhi::DrawCmd& cmd) -> void {
+	auto Renderer2D::submit(const rhi::DrawCmd& cmd) -> void {
 		m_Pass->submit(cmd);
 	}
 

@@ -1,7 +1,5 @@
 #include "entry_point.hpp"
 
-#include "ui/rml.hpp"
-
 #include <aby-eng/core/app.hpp>
 
 namespace aby::eng::editor {
@@ -18,12 +16,9 @@ namespace aby::eng::editor {
 
 	auto EntryPoint::on_exec() -> void {
 		auto [w, h] = App::window()->size();
-		m_Renderer  = rml::Renderer::create({ w, h });
-		App::add_obj(m_Renderer);
 	}
 
 	auto EntryPoint::on_create() -> void {
-		m_Renderer->load("index.rml");
 	}
 
 	auto EntryPoint::on_exit() -> void {

@@ -33,13 +33,13 @@ namespace aby::eng {
 		* @note format protocol: ansi esc codes & <col:#RRGGBB></col> tags (currently)
 		*/
 		static auto textf(const glm::fvec2& pos, FontPtr font, const Text2D& text) -> void;
-
 		/**
 		* @brief Submit a draw cmd to the renderers render pass
 		* @param cmd the rhi draw cmd to upload.
+		* @note copies the draw command but the vertex & index buffers remain the same.
+		* 		this allows for a draw command to be reused but change its user data
 		*/
-		static auto submit(rhi::DrawCmd& cmd) -> void;
-
+		static auto submit(const rhi::DrawCmd& cmd) -> void;
 		/**
 		* @brief Set the scissor flag
 		* @param enable [true | false]
