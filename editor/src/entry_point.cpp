@@ -1,5 +1,8 @@
 #include "entry_point.hpp"
 
+#include "editor_app.hpp"
+
+#include <QTimer>
 #include <aby-eng/core/app.hpp>
 
 namespace aby::eng::editor {
@@ -15,7 +18,8 @@ namespace aby::eng::editor {
 	}
 
 	auto EntryPoint::on_exec() -> void {
-		auto [w, h] = App::window()->size();
+		App::window()->set_visible(false);
+		App::add_obj(Application::create(m_AppInfo.argc, m_AppInfo.argv));
 	}
 
 	auto EntryPoint::on_create() -> void {

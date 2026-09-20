@@ -7,21 +7,39 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 
-add_executable(${PROJECT_NAME}
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
+qt_add_executable(${PROJECT_NAME}
     include/entry_point.hpp
+    include/editor_window.hpp
+    include/editor_app.hpp
+    include/editor_settings.hpp
 
     src/main.cpp
     src/entry_point.cpp
+    src/editor_window.cpp
+    src/editor_app.cpp
+    src/editor_settings.cpp
+
+    ${VENDOR_DIR}/QAnsiTextEdit/src/QAnsiTextEdit.h
+    ${VENDOR_DIR}/QAnsiTextEdit/src/ANSI-color-codes.h
+    ${VENDOR_DIR}/QAnsiTextEdit/src/QAnsiTextEdit.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
 PRIVATE
     include
+    ${VENDOR_DIR}/QAnsiTextEdit/src
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE 
+target_link_libraries(${PROJECT_NAME}
+PRIVATE 
     aby-eng::aby-eng
-    RmlUi::RmlUi
+    Qt6::Widgets
+    qtermwidget6
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE

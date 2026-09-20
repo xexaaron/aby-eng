@@ -13,3 +13,12 @@
 [submodule "vendor/argparse"]
 	path = vendor/argparse
 	url = https://github.com/p-ranav/argparse
+[submodule "vendor/lxqt-build-tools"]
+	path = vendor/lxqt-build-tools
+	url = https://github.com/lxqt/lxqt-build-tools/
+[submodule "vendor/qtermwidget"]
+	path = vendor/qtermwidget
+	url = https://github.com/lxqt/qtermwidget
+[submodule "vendor/QAnsiTextEdit"]
+	path = vendor/QAnsiTextEdit
+	url = https://github.com/epasveer/QAnsiTextEdit/
