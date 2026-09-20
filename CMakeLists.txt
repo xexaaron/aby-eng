@@ -8,7 +8,15 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+
+
 set(VENDOR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor)
+
+# add this before aby-win so that glfw doesnt create an uninstall target
+add_subdirectory(
+    ${VENDOR_DIR}/qtermwidget
+    ${CMAKE_BINARY_DIR}/qtermwidget
+)
 
 add_subdirectory(${VENDOR_DIR}/aby-rhi)
 add_subdirectory(${VENDOR_DIR}/aby-win)
@@ -23,8 +31,6 @@ set(FT_REQUIRE_HARFBUZZ TRUE CACHE BOOL "" FORCE)
 set(FT_REQUIRE_BROTLI TRUE CACHE BOOL "" FORCE)
 add_subdirectory(${VENDOR_DIR}/freetype)
 
-add_subdirectory(${VENDOR_DIR}/RmlUi)
-
 add_subdirectory(${VENDOR_DIR}/argparse)
 
 set_target_properties(aby-win PROPERTIES
@@ -35,19 +41,17 @@ set_target_properties(glfw PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
 
+if (TARGET SDL3-static)
 set_target_properties(SDL3-static PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
+endif()
 
 set_target_properties(aby-win-test PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
 
 set_target_properties(glm PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-)
-
-set_target_properties(rmlui PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
 

@@ -7,6 +7,8 @@
 - [![Python](https://img.shields.io/badge/Python-3.14.7-3776AB?logo=python&logoColor=fff)](#)
 - [![CMake](https://img.shields.io/badge/CMake-%3E%3D3.28.3-064F8C?logo=CMake&logoColor=white)](#)
 - [![Vulkan](https://img.shields.io/badge/Vulkan-1.4-AE0F28?logo=Vulkan&logoColor=fff)](#)
+- [![Qt](https://img.shields.io/badge/Qt-6-2CDE85?logo=Qt&logoColor=fff)](#) 	
+- [lxqt-build-tools](https://github.com/lxqt/lxqt-build-tools)
 
 ### Cloning
 
