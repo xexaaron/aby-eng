@@ -25,6 +25,8 @@ namespace aby::eng {
 	class ABY_API App {
 	public:
 		static auto run() -> void;
+		static auto exit() -> void;
+
 		static auto window() -> win::Window*;
 		static auto add_obj(ref<Object> object) -> void;
 	protected:

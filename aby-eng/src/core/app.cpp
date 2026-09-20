@@ -257,6 +257,10 @@ namespace aby::eng {
 		EntryPoint::get()->on_exit();
 	}
 
+	auto App::exit() -> void {
+		m_Window->close();
+	}
+
 	auto App::window() -> win::Window* {
 		return m_Window.get();
 	}

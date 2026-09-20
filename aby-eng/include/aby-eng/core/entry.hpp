@@ -61,9 +61,10 @@ namespace aby::eng {
 		virtual auto on_exit() -> void = 0;
 	private:
 		auto init(int argc, char** argv) -> i32;
+	protected:
+		AppInfo m_AppInfo;
 	private:
 		static inline ref<EntryPoint> m_EntryPoint = nullptr;
-		AppInfo m_AppInfo;
 	};
 
 } // namespace aby::eng
