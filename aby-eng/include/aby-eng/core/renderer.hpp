@@ -3,6 +3,7 @@
 #include "draw-cmd.hpp"
 #include "misc/font.hpp"
 #include "misc/types.hpp"
+#include "texture.hpp"
 
 #include <aby-rhi/aby-rhi.hpp>
 #include <glm/glm.hpp>
@@ -51,6 +52,8 @@ namespace aby::eng {
 		* @param max The max coords of the rectangle
 		*/
 		static auto set_scissor(glm::ivec2 min, glm::ivec2 max) -> void;
+
+		static auto render_target() -> rhi::TexturePtr;
 	private:
 		static auto init() -> bool;
 		static auto deinit() -> void;
@@ -68,6 +71,7 @@ namespace aby::eng {
 		static inline ref<rhi::IndexBuffer> m_Indices   = nullptr;
 		static inline rhi::Renderer* m_Renderer         = nullptr;
 		static inline rhi::TexturePtr m_DefaultTexture  = nullptr;
+		static inline rhi::TexturePtr m_RenderTarget    = nullptr;
 	};
 
 } // namespace aby::eng

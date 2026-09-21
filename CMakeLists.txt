@@ -33,23 +33,16 @@ add_subdirectory(${VENDOR_DIR}/freetype)
 
 add_subdirectory(${VENDOR_DIR}/argparse)
 
-set_target_properties(aby-win PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-)
 
 set_target_properties(glfw PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
 
 if (TARGET SDL3-static)
-set_target_properties(SDL3-static PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-)
+    set_target_properties(SDL3-static PROPERTIES
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+    )
 endif()
-
-set_target_properties(aby-win-test PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-)
 
 set_target_properties(glm PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"

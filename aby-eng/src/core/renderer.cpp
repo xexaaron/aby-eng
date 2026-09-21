@@ -30,6 +30,11 @@ namespace aby::eng {
 
 		{ // Render pass 2D
 			using namespace aby::rhi;
+
+			constexpr auto msaa = EAntiAliasing::msaa4x;
+
+			m_RenderTarget = Texture::create_render_target(4, msaa);
+
 			auto rpb = rhi::RenderPassBuilder::create();
 			m_Pass   = rpb->add_shader(shader::ui::NAME, shader::ui::VERTEX, EShader::vert)
 			               .add_shader(shader::ui::NAME, shader::ui::FRAGMENT, EShader::frag)
@@ -38,7 +43,7 @@ namespace aby::eng {
 			               .add_vertex_input<&Vertex2D::color>(EFormat::rgba_f32)
 			               .add_vertex_input<&Vertex2D::uv>(EFormat::rg_f32)
 			               .add_vertex_input<&Vertex2D::tex>(EFormat::r_u32)
-			               .add_color_attachment(Texture::create_render_target(4, EAntiAliasing::msaa4x), true)
+			               .add_color_attachment(m_RenderTarget, true)
 			               .set_topology(ETopology::triangle_list)
 			               .set_cull_mode(ECullMode::none, EFrontFace::counter_clockwise)
 			               .set_polygon_mode(EPolygonMode::fill, 1.f)
@@ -47,7 +52,7 @@ namespace aby::eng {
 			               .set_blend_alpha(Blend{ .op = EBlendOp::add, .src = EBlendFactor::one, .dst = EBlendFactor::one_minus_src_alpha }, 0)
 			               .set_depth(false, false, ECompareOp::never)
 			               .set_stencil(false, ECompareOp::never)
-			               .set_antialiasing(EAntiAliasing::msaa4x)
+			               .set_antialiasing(msaa)
 			               .set_depth_format(EFormat::none)
 			               .build();
 
@@ -91,7 +96,6 @@ namespace aby::eng {
 		m_Indices->push(indices);
 		m_Vertices->push(vertices);
 	}
-
 	auto Renderer2D::text(const glm::fvec2& pos, FontPtr font, const Text2D& text) -> void {
 		auto tex = font->texture()->id();
 
@@ -337,6 +341,10 @@ namespace aby::eng {
 			return std::string_view::npos;
 
 		return end + 1;
+	}
+
+	auto Renderer2D::render_target() -> rhi::TexturePtr {
+		return m_RenderTarget;
 	}
 
 } // namespace aby::eng

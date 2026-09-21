@@ -16,13 +16,17 @@ qt_add_executable(${PROJECT_NAME}
     include/entry_point.hpp
     include/editor_window.hpp
     include/editor_app.hpp
-    include/editor_settings.hpp
+    include/editor_common.hpp
+    include/widgets/editor_console.hpp
+    include/widgets/editor_settings.hpp
 
     src/main.cpp
     src/entry_point.cpp
     src/editor_window.cpp
     src/editor_app.cpp
-    src/editor_settings.cpp
+    src/editor_common.cpp
+    src/widgets/editor_console.cpp
+    src/widgets/editor_settings.cpp
 
     ${VENDOR_DIR}/QAnsiTextEdit/src/QAnsiTextEdit.h
     ${VENDOR_DIR}/QAnsiTextEdit/src/ANSI-color-codes.h
