@@ -19,6 +19,7 @@ qt_add_executable(${PROJECT_NAME}
     include/editor_common.hpp
     include/widgets/editor_console.hpp
     include/widgets/editor_settings.hpp
+    include/widgets/editor_logs.hpp
 
     src/main.cpp
     src/entry_point.cpp
@@ -27,6 +28,7 @@ qt_add_executable(${PROJECT_NAME}
     src/editor_common.cpp
     src/widgets/editor_console.cpp
     src/widgets/editor_settings.cpp
+    src/widgets/editor_logs.cpp
 
     ${VENDOR_DIR}/QAnsiTextEdit/src/QAnsiTextEdit.h
     ${VENDOR_DIR}/QAnsiTextEdit/src/ANSI-color-codes.h

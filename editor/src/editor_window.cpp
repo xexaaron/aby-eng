@@ -1,7 +1,6 @@
 #include "editor_window.hpp"
 
 #include "editor_common.hpp"
-#include "widgets/editor_console.hpp"
 #include "widgets/editor_settings.hpp"
 
 #include <QDockWidget>
@@ -39,24 +38,22 @@
 #include <qdockwidget.h>
 #include <qtermwidget.h>
 
-namespace aby::eng::editor::detail {
-
-	void qt_message_handler(QtMsgType type, const QMessageLogContext& context, const QString& msg);
-
-} // namespace aby::eng::editor::detail
-
 namespace aby::eng::editor {
 
 	Window::Window(QWidget* parent) :
-	    QMainWindow(parent) {
-		qInstallMessageHandler(detail::qt_message_handler);
+	    QMainWindow(parent),
+	    m_Console(new Console(this)),
+	    m_Logs(new Logs(rhi::Context::get().file_io()->path("editor.log"), this)) {
 		setWindowTitle("Abyss Engine");
 		resize(800, 600);
 
 		QIcon::setThemeName("oxygen"_q);
 
 		create_menus();
-		create_viewport();
+
+		add_bottom_widget(m_Console);
+		add_bottom_widget(m_Logs);
+
 		create_docks();
 
 		statusBar()->showMessage("Ready");
@@ -69,7 +66,7 @@ namespace aby::eng::editor {
 
 		settings->addAction("Editor"_q, [this] {
 			auto settings = new Settings(this);
-			settings->add_page("Interface", "Console", new ConsoleSettings);
+			settings->add_page("Interface", "Console", m_Console->settings());
 			settings->show();
 		});
 	}
@@ -83,45 +80,17 @@ namespace aby::eng::editor {
 		setCentralWidget(viewport);
 	}
 
-	void Window::create_viewport() {
-		auto* console = new Console;
+	auto Window::add_bottom_widget(QDockWidget* widget) -> void {
+		static bool first_call = true;
 
-		addDockWidget(Qt::BottomDockWidgetArea, console);
+		addDockWidget(Qt::BottomDockWidgetArea, widget);
 
-		auto* logs = create_logs();
-		addDockWidget(Qt::BottomDockWidgetArea, logs);
+		if (first_call) {
+			first_call = false;
+			return;
+		}
 
-		tabifyDockWidget(console, logs);
-	}
-
-	auto Window::create_logs() -> QDockWidget* {
-		auto [dock, logs] = docked<QAnsiTextEdit>(this, "Log");
-		logs->setReadOnly(true);
-		logs->setTextInteractionFlags(Qt::TextInteractionFlag::LinksAccessibleByMouse);
-		QPalette palette = logs->palette();
-
-		palette.setColor(QPalette::Base, QColor(44, 44, 44));
-
-		logs->setPalette(palette);
-
-		auto sink = LogSink([logs](const LogRecord& record) {
-			const auto msg = QString::fromStdString(record.msg);
-
-			QMetaObject::invokeMethod(
-			    logs,
-			    [logs, msg] {
-				logs->appendAnsiText(msg);
-			},
-			    Qt::QueuedConnection);
-		}, ELogLevel::err);
-
-		auto internal = Logger::get(ELogger::internal);
-		auto client   = Logger::get(ELogger::client);
-
-		internal->add_sink(sink);
-		client->add_sink(sink);
-
-		return dock;
+		tabifyDockWidget(m_Console, widget);
 	}
 
 	auto Window::event(QEvent* event) -> bool {
@@ -133,31 +102,6 @@ namespace aby::eng::editor {
 	}
 
 } // namespace aby::eng::editor
-
-namespace aby::eng::editor::detail {
-
-	void qt_message_handler(QtMsgType type, const QMessageLogContext& context, const QString& msg) {
-		switch (type) {
-			case QtDebugMsg:
-				log_dev("[qt] {}", msg.toStdString());
-				break;
-			case QtInfoMsg:
-				log_inf("[qt] {}", msg.toStdString());
-				break;
-			case QtWarningMsg:
-				log_wrn("[qt] {}", msg.toStdString());
-				break;
-			case QtCriticalMsg:
-				log_err("[qt] {}", msg.toStdString());
-				break;
-			case QtFatalMsg:
-				Logger::get(ELogger::internal)->log(ELogLevel::ast, "[qt] {}:({}) @ {}", context.file, context.line, context.function);
-				Logger::get(ELogger::internal)->log(ELogLevel::ast, "[qt] {}", msg.toStdString());
-				break;
-		}
-	}
-
-} // namespace aby::eng::editor::detail
 
 #ifdef __qt_emit_stored__
 #	define emit __qt_emit_stored__
