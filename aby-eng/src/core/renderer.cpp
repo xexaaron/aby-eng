@@ -24,7 +24,7 @@ namespace aby::eng {
 		// Create and access the texture immediately so that it gets slot 0
 		// Then we dont have to check if our vertex id is = to some magic value
 		// in order to "not have one"
-		m_DefaultTexture            = rhi::Texture::create("default_texture.png", rhi::TextureParams{});
+		m_DefaultTexture            = rhi::Texture::create("resource/engine/textures/default_texture.png", rhi::TextureParams{});
 		uint32_t default_texture_id = m_DefaultTexture->id();
 		(void)default_texture_id;
 

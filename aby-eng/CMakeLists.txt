@@ -96,21 +96,28 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource/engine
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource/engine/textures
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource/engine/shaders
+
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_CURRENT_SOURCE_DIR}/resource/ui.frag
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ui.frag
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource/engine/shaders/ui.frag
 
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_CURRENT_SOURCE_DIR}/resource/ui.vert
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ui.vert
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource/engine/shaders/ui.vert
 
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_CURRENT_SOURCE_DIR}/resource/default_texture.png
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/default_texture.png
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource/engine/textures/default_texture.png
 
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_CURRENT_SOURCE_DIR}/resource/Cobblestone.png
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Cobblestone.png
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource/engine/textures/Cobblestone.png
 
     COMMENT "[aby:eng] Copying resources"
 )

@@ -14,6 +14,12 @@
 #include <exception>
 #include <ranges>
 
+namespace aby::eng::detail {
+
+	auto executable_path() -> fs::path;
+
+}
+
 namespace aby::eng {
 
 	class RHILoggerInterface : public rhi::ILogger {
@@ -168,7 +174,7 @@ namespace aby::eng {
 		}
 
 		expect(info.argv, "[eng] app info 'argv' was not set");
-		m_Context->file_io()->set_cwd(fs::path(info.argv[0]).parent_path());
+		m_Context->file_io()->set_cwd(detail::executable_path().parent_path());
 		m_Context->file_io()->set_cache_dir(m_Context->file_io()->cwd() / "cache");
 
 		if (!Renderer2D::init()) {
@@ -275,3 +281,76 @@ namespace aby::eng {
 	}
 
 } // namespace aby::eng
+
+#include <array>
+
+#ifdef __linux__
+#	include <limits.h>
+#	include <unistd.h>
+#elif defined(_WIN32)
+#	include <Windows.h>
+#elif defined(__APPLE__)
+#	include <mach-o/dyld.h>
+#else
+#	error "unsupported platform"
+#endif
+
+namespace aby::eng::detail {
+
+#ifdef __linux__
+
+	auto executable_path() -> fs::path {
+		std::array<char, PATH_MAX> buffer{};
+
+		const auto size = ::readlink(
+		    "/proc/self/exe",
+		    buffer.data(),
+		    buffer.size());
+
+		if (size <= 0)
+			return {};
+
+		return fs::path(std::string(buffer.data(), size));
+	}
+
+#elif defined(_WIN32)
+
+	auto executable_path() -> fs::path {
+		std::wstring buffer(MAX_PATH, L'\0');
+
+		for (;;) {
+			const DWORD size = ::GetModuleFileNameW(
+			    nullptr,
+			    buffer.data(),
+			    static_cast<DWORD>(buffer.size()));
+
+			if (size == 0)
+				return {};
+
+			if (size < buffer.size()) {
+				buffer.resize(size);
+				return fs::path(buffer);
+			}
+
+			buffer.resize(buffer.size() * 2);
+		}
+	}
+
+#elif defined(__APPLE__)
+
+	auto executable_path() -> fs::path {
+		uint32_t size = 0;
+
+		_NSGetExecutablePath(nullptr, &size);
+
+		std::string buffer(size, '\0');
+
+		if (_NSGetExecutablePath(buffer.data(), &size) != 0)
+			return {};
+
+		return fs::path(buffer.c_str());
+	}
+
+#endif
+
+} // namespace aby::eng::detail
