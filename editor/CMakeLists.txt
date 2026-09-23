@@ -17,6 +17,8 @@ qt_add_executable(${PROJECT_NAME}
     include/widgets/editor_console.hpp
     include/widgets/editor_settings.hpp
     include/widgets/editor_logs.hpp
+    include/misc/qt_header_guard_start.inl
+    include/misc/qt_header_guard_end.inl
 
     src/main.cpp
     src/widgets/editor_console.cpp

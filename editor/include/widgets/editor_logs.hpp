@@ -1,17 +1,10 @@
 #pragma once
 
+#include "misc/qt_header_guard_start.inl"
 #include "widgets/editor_console.hpp"
 
 #include <fstream>
 #include <mutex>
-
-#ifdef emit
-#	define __qt_emit_stored__ emit
-#	undef emit
-#	include <aby-eng/log.hpp>
-#else
-#	include <aby-eng/log.hpp>
-#endif
 
 namespace aby::eng::editor {
 
@@ -28,8 +21,5 @@ namespace aby::eng::editor {
 
 } // namespace aby::eng::editor
 
-#ifdef __qt_emit_stored__
-#	define emit __qt_emit_stored__
-#	undef __qt_emit_stored__
-#endif
+#include "misc/qt_header_guard_end.inl"
 
