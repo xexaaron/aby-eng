@@ -1,7 +1,5 @@
 #include "widgets/editor_console.hpp"
 
-#include "editor_common.hpp"
-
 #include <QApplication>
 #include <aby-rhi/aby-rhi.hpp>
 #include <qtermwidget.h>
@@ -24,11 +22,11 @@ namespace aby::eng::editor {
 
 		QFont font = QApplication::font();
 #ifdef Q_OS_MACOS
-		font.setFamily("Monaco"_q);
+		font.setFamily(QStringLiteral("Monaco"));
 #elif defined(Q_WS_QWS)
-		font.setFamily("fixed"_q);
+		font.setFamily(QStringLiteral("fixed"));
 #else
-		font.setFamily("Monospace"_q);
+		font.setFamily(QStringLiteral("Monospace"));
 #endif
 		font.setPointSize(10);
 

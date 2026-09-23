@@ -17,16 +17,24 @@ namespace aby::eng::detail {
 
 	auto executable_path() -> fs::path;
 
-}
+} // namespace aby::eng::detail
 
 namespace aby::eng {
 
 	auto App::init(const AppInfo& info) -> bool {
+		// TODO: QT Documentation
+		// Qt-specific integration:
+		// When a child QWindow is embedded into an externally-owned Qt window via
+		// QWidget::createWindowContainer(), closing the parent does not generate a
+		// QEvent::Close for the child QWindow. The application must therefore
+		// forward the parent's close event to the child through an event filter.
+
 		win::ILogger::set<detail::WINLoggerInterface>();
 
 		EngineArgs args = parse_args(info);
-		m_Window        = win::Window::create(info.win_cfg);
-		m_Context       = &rhi::Context::get();
+
+		m_Window  = win::Window::create(info.win_cfg);
+		m_Context = &rhi::Context::get();
 
 		rhi::ContextParams ctx_cfg{
 			.renderer_backend = rhi::ERenderer::vulkan,
