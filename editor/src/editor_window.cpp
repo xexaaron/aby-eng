@@ -1,5 +1,6 @@
 #include "editor_window.hpp"
 
+#include "core/renderer.hpp"
 #include "editor_common.hpp"
 #include "widgets/editor_settings.hpp"
 
@@ -7,6 +8,7 @@
 #include <QIcon>
 #include <QLabel>
 #include <QMenuBar>
+#include <QPainter>
 #include <QPushButton>
 #include <QStatusBar>
 #include <QTextEdit>
@@ -14,6 +16,7 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 #include <aby-eng/core/app.hpp>
+#include <aby-eng/core/renderer.hpp>
 #include <aby-rhi/context.hpp>
 #include <mutex>
 #include <qboxlayout.h>
@@ -72,12 +75,6 @@ namespace aby::eng::editor {
 	}
 
 	void Window::create_docks() {
-		auto* viewport = new QLabel("<Viewport>");
-
-		viewport->setAlignment(Qt::AlignCenter);
-		viewport->setMinimumSize(400, 300);
-
-		setCentralWidget(viewport);
 	}
 
 	auto Window::add_bottom_widget(QDockWidget* widget) -> void {
@@ -107,4 +104,3 @@ namespace aby::eng::editor {
 #	define emit __qt_emit_stored__
 #	undef __qt_emit_stored__
 #endif
-

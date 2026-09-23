@@ -14,6 +14,8 @@ namespace aby::eng::editor {
 
 		static auto create(int argc, char** argv) -> ref<Application>;
 
+		auto window() -> Window&;
+
 		auto on_create() -> void override;
 		auto on_tick(const Time& deltatime) -> void override;
 		auto on_render() -> void override;

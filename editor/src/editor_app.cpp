@@ -40,6 +40,10 @@ namespace aby::eng::editor {
 	auto Application::on_destroy() -> void {
 	}
 
+	auto Application::window() -> Window& {
+		return m_Window;
+	}
+
 } // namespace aby::eng::editor
 
 #ifdef __qt_emit_stored__

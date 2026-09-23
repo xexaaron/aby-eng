@@ -22,17 +22,6 @@ add_library(${PROJECT_NAME} SHARED
     include/aby-eng/misc/time.hpp
     include/aby-eng/misc/font.hpp
     include/aby-eng/misc/utf8.hpp
-    include/aby-eng/misc/registry.hpp
-
-    include/aby-eng/ui/element.hpp
-    include/aby-eng/ui/uitypes.hpp
-    include/aby-eng/ui/image.hpp
-    include/aby-eng/ui/button.hpp
-    include/aby-eng/ui/window.hpp
-    include/aby-eng/ui/containers/canvas.hpp
-    include/aby-eng/ui/containers/container.hpp
-    include/aby-eng/ui/containers/grid.hpp
-    include/aby-eng/ui/containers/aspectratiobox.hpp
 
     src/common.cpp
     src/log.cpp
@@ -48,17 +37,6 @@ add_library(${PROJECT_NAME} SHARED
     src/misc/time.cpp
     src/misc/font.cpp
     src/misc/utf8.cpp
-    src/misc/registry.cpp
-
-    src/ui/element.cpp
-    src/ui/uitypes.cpp
-    src/ui/image.cpp
-    src/ui/button.cpp
-    src/ui/window.cpp
-    src/ui/containers/canvas.cpp
-    src/ui/containers/container.cpp
-    src/ui/containers/grid.cpp
-    src/ui/containers/aspectratiobox.cpp
 )
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

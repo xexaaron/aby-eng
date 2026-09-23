@@ -4,7 +4,6 @@
 #include "core/entry.hpp"
 #include "core/renderer.hpp"
 #include "log.hpp"
-#include "misc/registry.hpp"
 
 #include <aby-win/backend/glfw/glfw-window.hpp>
 #include <aby-win/common.hpp>
@@ -22,141 +21,18 @@ namespace aby::eng::detail {
 
 namespace aby::eng {
 
-	class RHILoggerInterface : public rhi::ILogger {
-	public:
-		auto log(rhi::ELogLevel level, const std::string& msg) -> void override {
-			switch (level) {
-				case rhi::ELogLevel::debug:
-					log_dev("[rhi] {}", msg);
-					break;
-				case rhi::ELogLevel::trace:
-					log_trc("[rhi] {}", msg);
-					break;
-				case rhi::ELogLevel::info:
-					log_inf("[rhi] {}", msg);
-					break;
-				case rhi::ELogLevel::warn:
-					log_wrn("[rhi] {}", msg);
-					break;
-				case rhi::ELogLevel::error:
-					log_err("[rhi] {}", msg);
-					break;
-				case rhi::ELogLevel::fatal:
-					// The library logs multiple times to fatal level per assert
-					// We want the logger to immediately dump these asserts instead of queueing them
-					// into the mulithreaded log handler
-					Logger::get(ELogger::internal)->log(ELogLevel::ast, "[rhi] {}", msg);
-					break;
-			}
-		}
-	private:
-	};
-
-	class WINLoggerInterface : public win::ILogger {
-	public:
-		auto log(win::ELogLevel level, const std::string& msg) -> void {
-			switch (level) {
-				case win::ELogLevel::debug:
-					log_dev("[win] {}", msg);
-					break;
-				case win::ELogLevel::trace:
-					log_trc("[win] {}", msg);
-					break;
-				case win::ELogLevel::info:
-					log_inf("[win] {}", msg);
-					break;
-				case win::ELogLevel::warn:
-					log_wrn("[win] {}", msg);
-					break;
-				case win::ELogLevel::error:
-					log_err("[win] {}", msg);
-					break;
-				case win::ELogLevel::fatal:
-					// The library logs multiple times to fatal level per assert.
-					// We want the logger to immediately dump these asserts instead of queueing them
-					// into the mulithreaded log handler
-					Logger::get(ELogger::internal)->log(ELogLevel::ast, "[win] {}", msg);
-					break;
-			}
-		}
-	private:
-	};
-
-} // namespace aby::eng
-
-namespace aby::eng {
-
-	struct EngineArgs {
-		bool render_doc = false;
-	};
-
 	auto App::init(const AppInfo& info) -> bool {
-		win::ILogger::set<WINLoggerInterface>();
-		win::Config window_cfg;
+		win::ILogger::set<detail::WINLoggerInterface>();
 
-		EngineArgs args{};
-
-		std::atexit([]() {
-			puts("\n");
-		});
-
-		argparse::ArgumentParser parser(
-		    fs::path(info.argv[0]).filename().string(),
-		    info.version,
-		    argparse::default_arguments::all,
-		    true,
-		    std::cout);
-
-		parser.add_group("Application arguments");
-
-		// Give the entry point the opportunity to add arguments
-		EntryPoint::get()->on_cmdl(parser);
-
-		parser.add_group("Engine arguments");
-		parser.add_argument("--render-doc")
-		    .flag()
-		    .help("Use render doc compatible native window (eg. X11 > Wayland for vulkan)")
-		    .default_value(false)
-		    .store_into(args.render_doc);
-
-		try {
-			parser.parse_known_args(info.argc, info.argv);
-		} catch (std::exception& exc) {
-			// throws on invalid args, but we want to reuse these for
-			if (exc.what()) {
-				log_dev("[argparse] {}", exc.what());
-			}
-		}
-
-		rhi::EWindow window_backend = Registry::get<"rhi-window-backend", false>();
-		Registry::set("app-flag-render-doc", args.render_doc);
-		if (args.render_doc) {
-			window_backend = Registry::get<"rhi-window-backend", true>();
-		}
-
-		window_cfg.set_name(info.name)
-		    .set_backends(Registry::get<"win-backend">(), Registry::get<"win-render-backend">())
-		    .set_size(800, 600)
-		    .set_theme(win::ETheme::automatic)
-		    .set_resizable(true)
-		    .set_focused(true)
-		    .set_visible(true)
-		    .set_visible(true)
-		    .set_render_doc(args.render_doc);
-
-		m_Window = win::Window::create(window_cfg);
-
-		m_Context = &rhi::Context::get();
+		EngineArgs args = parse_args(info);
+		m_Window        = win::Window::create(info.win_cfg);
+		m_Context       = &rhi::Context::get();
 
 		rhi::ContextParams ctx_cfg{
-			.renderer_backend = Registry::get<"rhi-backend">(),
-#ifdef __linux__
-			.window_backend = window_backend,
-#else
-			.window_backend = rhi::Ewindow::automatic,
-#endif
-			.native_window = m_Window->native().platform_window,
-			.graphics      = {}
+			.renderer_backend = rhi::ERenderer::vulkan,
+			.window_backend   = rhi::EWindow::automatic,
+			.native_window    = m_Window->native().platform_window,
+			.graphics         = {}
 		};
 
 #ifdef __linux__
@@ -167,11 +43,13 @@ namespace aby::eng {
 		};
 #endif
 
-		m_Context->set_interface<RHILoggerInterface>();
+		m_Context->set_interface<detail::RHILoggerInterface>();
 		if (!m_Context->init(ctx_cfg)) {
 			log_err("[eng] failed to initialize render context");
 			return false;
 		}
+		auto* renderer = m_Context->renderer();
+		renderer->set_clear_color(rhi::Color(0.15f, 0.15f, 0.15f, 1.f));
 
 		expect(info.argv, "[eng] app info 'argv' was not set");
 		m_Context->file_io()->set_cwd(detail::executable_path().parent_path());
@@ -204,7 +82,6 @@ namespace aby::eng {
 	auto App::run() -> void {
 		win::Window& window = *m_Window.get();
 		auto* renderer      = m_Context->renderer();
-
 		EntryPoint::get()->on_exec();
 
 		for (auto& object : m_Objects) {
@@ -212,8 +89,6 @@ namespace aby::eng {
 		}
 
 		m_State = EAppState::running;
-
-		renderer->set_clear_color(rhi::Color(0.15f, 0.15f, 0.15f, 1.f));
 
 		using clock     = std::chrono::steady_clock;
 		auto last_frame = clock::now();
@@ -278,6 +153,44 @@ namespace aby::eng {
 			object->on_create();
 		}
 		m_Objects.push_back(object);
+	}
+
+	auto App::parse_args(const AppInfo& info) -> EngineArgs {
+		EngineArgs args{};
+
+		std::atexit([]() {
+			puts("\n");
+		});
+
+		argparse::ArgumentParser parser(
+		    detail::executable_path().filename().string(),
+		    info.version,
+		    argparse::default_arguments::all,
+		    true,
+		    std::cout);
+
+		parser.add_group("Application arguments");
+
+		// Give the entry point the opportunity to add arguments
+		EntryPoint::get()->on_cmdl(parser);
+
+		parser.add_group("Engine arguments");
+		parser.add_argument("--render-doc")
+		    .flag()
+		    .help("Use render doc compatible native window (eg. X11 > Wayland for vulkan)")
+		    .default_value(false)
+		    .store_into(args.render_doc);
+
+		try {
+			parser.parse_known_args(info.argc, info.argv);
+		} catch (std::exception& exc) {
+			// throws on invalid args, but we want to reuse these for
+			if (exc.what()) {
+				log_dev("[argparse] {}", exc.what());
+			}
+		}
+
+		return args;
 	}
 
 } // namespace aby::eng
@@ -352,5 +265,61 @@ namespace aby::eng::detail {
 	}
 
 #endif
+
+} // namespace aby::eng::detail
+
+namespace aby::eng::detail {
+
+	auto RHILoggerInterface::log(rhi::ELogLevel level, const std::string& msg) -> void {
+		switch (level) {
+			case rhi::ELogLevel::debug:
+				log_dev("[rhi] {}", msg);
+				break;
+			case rhi::ELogLevel::trace:
+				log_trc("[rhi] {}", msg);
+				break;
+			case rhi::ELogLevel::info:
+				log_inf("[rhi] {}", msg);
+				break;
+			case rhi::ELogLevel::warn:
+				log_wrn("[rhi] {}", msg);
+				break;
+			case rhi::ELogLevel::error:
+				log_err("[rhi] {}", msg);
+				break;
+			case rhi::ELogLevel::fatal:
+				// The library logs multiple times to fatal level per assert
+				// We want the logger to immediately dump these asserts instead of queueing them
+				// into the mulithreaded log handler
+				Logger::get(ELogger::internal)->log(ELogLevel::ast, "[rhi] {}", msg);
+				break;
+		}
+	}
+
+	auto WINLoggerInterface::log(win::ELogLevel level, const std::string& msg) -> void {
+		switch (level) {
+			case win::ELogLevel::debug:
+				log_dev("[win] {}", msg);
+				break;
+			case win::ELogLevel::trace:
+				log_trc("[win] {}", msg);
+				break;
+			case win::ELogLevel::info:
+				log_inf("[win] {}", msg);
+				break;
+			case win::ELogLevel::warn:
+				log_wrn("[win] {}", msg);
+				break;
+			case win::ELogLevel::error:
+				log_err("[win] {}", msg);
+				break;
+			case win::ELogLevel::fatal:
+				// The library logs multiple times to fatal level per assert.
+				// We want the logger to immediately dump these asserts instead of queueing them
+				// into the mulithreaded log handler
+				Logger::get(ELogger::internal)->log(ELogLevel::ast, "[win] {}", msg);
+				break;
+		}
+	}
 
 } // namespace aby::eng::detail

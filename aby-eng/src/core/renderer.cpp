@@ -20,7 +20,7 @@ namespace aby::eng {
 	auto Renderer2D::init() -> bool {
 		auto& ctx  = rhi::Context::get();
 		m_Renderer = ctx.renderer();
-
+		m_Renderer->set_clear_color(rhi::Color(0.45, 0.05f, 0.75f, 1.f));
 		// Create and access the texture immediately so that it gets slot 0
 		// Then we dont have to check if our vertex id is = to some magic value
 		// in order to "not have one"

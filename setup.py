@@ -22,7 +22,7 @@ def main() -> None:
 
     # Get shaderc dependencies
     shaderc = ROOT / "vendor" / "aby-rhi" / "vendor" / "shaderc"
-    run("python", "utils/git-sync-deps.py", cwd=shaderc)
+    run("python", "utils/git-sync-deps", cwd=shaderc)
 
     # Fetch and install lxqt-build-tools for qtermwidget
     lxqt = ROOT / "vendor" / "lxqt-build-tools"

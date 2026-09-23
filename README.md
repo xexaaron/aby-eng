@@ -2,35 +2,24 @@
 
 ## Project Setup
 
-### Requirements
+| Requirement                                                                                                   | Version                                                            | Platform |
+| ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | -------- |
+| [![Python](https://img.shields.io/badge/Python-3776AB?logo=python\&logoColor=fff)](#)                         | ![Version](https://img.shields.io/badge/version-%3E=_3.14.17-blue) | ![Platform](https://img.shields.io/badge/Cross-Platform-555)        |
+| [![CMake](https://img.shields.io/badge/CMake-064F8C?logo=CMake\&logoColor=fff)](#)                            | ![Version](https://img.shields.io/badge/version-%3E=_3.28.3-blue)  | ![Platform](https://img.shields.io/badge/Cross-Platform-555)        |
+| [![Vulkan](https://img.shields.io/badge/Vulkan-AE0F28?logo=Vulkan\&logoColor=fff)](#)                         | ![Version](https://img.shields.io/badge/version-%3E=_1.4.341-blue) | ![Platform](https://img.shields.io/badge/Cross-Platform-555)        |
+| [![Qt](https://img.shields.io/badge/Qt-2CDE85?logo=Qt\&logoColor=fff)](#)                                     | ![Version](https://img.shields.io/badge/version-6-blue)            | ![Platform](https://img.shields.io/badge/Cross-Platform-555)      |
+| [![MSVC Toolchain](https://img.shields.io/badge/MSVC%20Toolchain-5C2D91?logo=visualstudio\&logoColor=fff)](#) | ![Version](https://img.shields.io/badge/version-2026-blue)         | [![Windows](https://custom-icon-badges.demolab.com/badge/Windows-0078D6?logo=windows11&logoColor=white)](#)  |
 
-- [![Python](https://img.shields.io/badge/Python-3.14.7-3776AB?logo=python&logoColor=fff)](#)
-- [![CMake](https://img.shields.io/badge/CMake-%3E%3D3.28.3-064F8C?logo=CMake&logoColor=white)](#)
-- [![Vulkan](https://img.shields.io/badge/Vulkan-1.4-AE0F28?logo=Vulkan&logoColor=fff)](#)
-- [![Qt](https://img.shields.io/badge/Qt-6-2CDE85?logo=Qt&logoColor=fff)](#) 	
-- [lxqt-build-tools](https://github.com/lxqt/lxqt-build-tools)
 
 ### Cloning
 
 ```shell
-git clone --depth=1 --recurse-submodules https://github.com/xexaaron/aby-eng.git
-```
-
-### Setup
-
-#### [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-```shell
+git clone --depth=1 --recurse-submodules https://github.com/xexaaron/aby-eng
 cd aby-eng
-chmod +x ./setup.sh
-./setup.sh
+python3 ./setup.py
 ```
-#### [![Windows](https://custom-icon-badges.demolab.com/badge/Windows-0078D6?logo=windows11&logoColor=white)](#)
 
-```shell
-cd aby-eng
-./setup.bat
-```
-#### Building
+### Building
 
 ``` shell
 cmake --build bin --config <Release|Debug|RelWithDebInfo>

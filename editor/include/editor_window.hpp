@@ -3,11 +3,15 @@
 #include "widgets/editor_logs.hpp"
 
 #include <QDockWidget>
+#include <QLabel>
 #include <QMainWindow>
+#include <QWindow>
 #include <aby-eng/core/object.hpp>
+#include <aby-rhi/aby-rhi.hpp>
 #include <qdockwidget.h>
 #include <qmainwindow.h>
 #include <qobject.h>
+#include <qwidget.h>
 
 namespace aby::eng::editor {
 

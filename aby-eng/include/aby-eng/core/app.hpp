@@ -4,6 +4,7 @@
 
 #include <aby-rhi/aby-rhi.hpp>
 #include <aby-win/window.hpp>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -14,12 +15,17 @@ namespace aby::eng {
 		std::string version = "1.0";
 		i32 argc            = 0;
 		char** argv         = nullptr;
+		win::Config win_cfg = {};
 	};
 
 	enum class EAppState {
 		init,
 		running,
 		deinit,
+	};
+
+	struct EngineArgs {
+		bool render_doc = false;
 	};
 
 	class ABY_API App {
@@ -34,6 +40,7 @@ namespace aby::eng {
 	private:
 		static auto init(const AppInfo& info) -> bool;
 		static auto deinit() -> void;
+		static auto parse_args(const AppInfo& info) -> EngineArgs;
 		friend class EntryPoint;
 	private:
 		static inline unique<win::Window> m_Window = nullptr;
@@ -43,3 +50,19 @@ namespace aby::eng {
 	};
 
 } // namespace aby::eng
+
+namespace aby::eng::detail {
+
+	class RHILoggerInterface : public rhi::ILogger {
+	public:
+		auto log(rhi::ELogLevel level, const std::string& msg) -> void override;
+	private:
+	};
+
+	class WINLoggerInterface : public win::ILogger {
+	public:
+		auto log(win::ELogLevel level, const std::string& msg) -> void override;
+	private:
+	};
+
+} // namespace aby::eng::detail
