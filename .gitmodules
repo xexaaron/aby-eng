@@ -19,6 +19,3 @@
 [submodule "vendor/qtermwidget"]
 	path = vendor/qtermwidget
 	url = https://github.com/lxqt/qtermwidget
-[submodule "vendor/QAnsiTextEdit"]
-	path = vendor/QAnsiTextEdit
-	url = https://github.com/epasveer/QAnsiTextEdit/

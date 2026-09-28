@@ -32,12 +32,6 @@ Copyright (c) G-Truc Creation
 
 License: [Happy Bunny License (Modified MIT License)](vendor/glm/copying.txt)
 
-## [QAnsiTextEdit](https://github.com/epasveer/QAnsiTextEdit/)
-
-Copyright (c) Ernie Pasveer
-
-License: [MIT License](vendor/QAnsiTextEdit/LICENSE)
-
 ## [qtermwidget](https://github.com/lxqt/qtermwidget)
 
 qtermwidget contains components distributed under multiple licenses.
