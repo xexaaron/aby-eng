@@ -8,11 +8,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 
 add_executable(${PROJECT_NAME}
-    include/entry_point.hpp
+    include/main.hpp
     include/moving_quad.hpp
     
     src/main.cpp
-    src/entry_point.cpp
     src/moving_quad.cpp
 )
 

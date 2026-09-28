@@ -7,6 +7,8 @@
 namespace aby::eng::sandbox {
 
 	class MovingQuad : public eng::Object {
+		ABY_OBJECT_CLASS(MovingQuad);
+		ABY_OBJECT_DEFAULT_CREATE(MovingQuad);
 	public:
 		auto on_create() -> void override;
 		auto on_render() -> void override;
