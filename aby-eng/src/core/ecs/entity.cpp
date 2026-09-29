@@ -24,7 +24,8 @@ namespace aby::eng::ecs {
 	}
 
 	auto Entity::clone() const -> Entity {
-		auto& reg         = App::entity_registry();
+		auto& reg = App::entity_registry();
+
 		const auto entity = reg.create();
 
 		for (auto&& [type, storage] : reg.storage()) {

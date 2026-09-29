@@ -210,7 +210,7 @@ namespace aby::eng {
 			if (m_EntityRegistry.all_of<ecs::LifecycleComponent>(entity)) {
 				auto& lifecycle = m_EntityRegistry.get<ecs::LifecycleComponent>(entity);
 				if (lifecycle.on_create)
-					lifecycle.on_create();
+					lifecycle.on_create(entity);
 			}
 		}
 	}

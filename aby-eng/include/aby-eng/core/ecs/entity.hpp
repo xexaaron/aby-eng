@@ -1,10 +1,6 @@
 #pragma once
 #include "core/app.hpp"
 #include "core/ecs/component.hpp"
-#include "core/ecs/components/component.inl"
-#include "core/ecs/components/lifecycle-component.hpp"
-#include "core/ecs/components/sprite-component.hpp"
-#include "core/ecs/components/transform-component.hpp"
 #include "core/object.hpp"
 #include "log.hpp"
 #include "misc/meta.hpp"

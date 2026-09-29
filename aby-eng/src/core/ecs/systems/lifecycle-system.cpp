@@ -21,7 +21,7 @@ namespace aby::eng::ecs {
 		for (const auto entity : entities) {
 			auto& lifecycle = m_Registry->get<LifecycleComponent>(entity);
 			if (lifecycle.on_create)
-				lifecycle.on_create();
+				lifecycle.on_create(entity);
 		}
 	}
 
@@ -30,7 +30,7 @@ namespace aby::eng::ecs {
 		for (const auto entity : entities) {
 			auto& lifecycle = m_Registry->get<LifecycleComponent>(entity);
 			if (lifecycle.on_tick)
-				lifecycle.on_tick(deltatime);
+				lifecycle.on_tick(entity, deltatime);
 		}
 	}
 
@@ -39,7 +39,7 @@ namespace aby::eng::ecs {
 		for (const auto entity : entities) {
 			auto& lifecycle = m_Registry->get<LifecycleComponent>(entity);
 			if (lifecycle.on_destroy)
-				lifecycle.on_destroy();
+				lifecycle.on_destroy(entity);
 		}
 	}
 
