@@ -1,9 +1,16 @@
 #include "core/app.hpp"
 
 #include "common-enums.hpp"
+#include "core/ecs/component.hpp"
+#include "core/ecs/components/lifecycle-component.hpp"
+#include "core/ecs/components/sprite-component.hpp"
+#include "core/ecs/components/transform-component.hpp"
+#include "core/ecs/systems/lifecycle-system.hpp"
 #include "core/entry.hpp"
 #include "core/renderer.hpp"
 #include "log.hpp"
+#include "misc/meta.hpp"
+#include "misc/types.hpp"
 
 #include <aby-win/backend/glfw/glfw-window.hpp>
 #include <aby-win/common.hpp>
@@ -77,6 +84,21 @@ namespace aby::eng {
 			return false;
 		});
 
+		// using ComponentList = ecs::Component::type_list;
+
+		// meta::for_each_t<ComponentList>([]<typename Component>() {
+		// 	using Properties = Component::meta::property_type_list;
+		// 	log_inf("Component:        {}", Component::name());
+		// 	log_inf(" -- visibility:   {}", (Component::hidden() ? "hidden" : "shown"));
+		// 	log_inf(" -- properties:    ");
+		// 	meta::for_each_t<Properties>([]<typename Property>() {
+		// 		using T = Property::meta;
+		// 		log_inf(" ---- property: {}", T::name());
+		// 		log_inf(" ------ access: {}", T::access());
+		// 		log_inf(" ------ type:   {}", T::type_name());
+		// 	});
+		// });
+
 		return true;
 	}
 
@@ -92,8 +114,13 @@ namespace aby::eng {
 		auto* renderer      = m_Context->renderer();
 		EntryPoint::get()->on_exec();
 
-		for (auto& object : m_Objects) {
-			object->on_create();
+		create<ecs::LifecycleSystem>(m_EntityRegistry);
+
+		// Create objects
+		{
+			for (auto& object : m_Objects) {
+				object->on_create();
+			}
 		}
 
 		m_State = EAppState::running;
@@ -119,8 +146,10 @@ namespace aby::eng {
 				continue;
 			}
 
-			for (auto& object : m_Objects) {
-				object->on_tick(deltatime);
+			{
+				for (auto& object : m_Objects) {
+					object->on_tick(deltatime);
+				}
 			}
 
 			if (!Renderer2D::begin_frame()) {
@@ -128,8 +157,18 @@ namespace aby::eng {
 				continue;
 			}
 
-			for (auto& object : m_Objects) {
-				object->on_render();
+			{
+				for (auto& object : m_Objects) {
+					object->on_render();
+				}
+
+				auto entities = m_EntityRegistry.view<ecs::TransformComponent, ecs::SpriteComponent>();
+				for (const auto entity : entities) {
+					auto [transform, sprite] = entities.get<ecs::TransformComponent, ecs::SpriteComponent>(entity);
+					Renderer2D::quad(
+					    Transform2D(transform.pos, transform.size, transform.scale),
+					    Material2D(sprite.color, sprite.texture, { sprite.uv_min, sprite.uv_max }));
+				}
 			}
 
 			Renderer2D::render();
@@ -139,8 +178,10 @@ namespace aby::eng {
 
 		m_State = EAppState::deinit;
 
-		for (auto& object : m_Objects) {
-			object->on_destroy();
+		{
+			for (auto& object : m_Objects) {
+				object->on_destroy();
+			}
 		}
 
 		EntryPoint::get()->on_exit();
@@ -161,6 +202,17 @@ namespace aby::eng {
 			object->on_create();
 		}
 		m_Objects.push_back(object);
+	}
+
+	auto App::add_entity(entt::entity entity) -> void {
+		expect(m_State != EAppState::deinit, "cannot add an entity to the application during deinitalization");
+		if (m_State == EAppState::running) {
+			if (m_EntityRegistry.all_of<ecs::LifecycleComponent>(entity)) {
+				auto& lifecycle = m_EntityRegistry.get<ecs::LifecycleComponent>(entity);
+				if (lifecycle.on_create)
+					lifecycle.on_create();
+			}
+		}
 	}
 
 	auto App::parse_args(const AppInfo& info) -> EngineArgs {
@@ -199,6 +251,10 @@ namespace aby::eng {
 		}
 
 		return args;
+	}
+
+	auto App::entity_registry() -> entt::registry& {
+		return m_EntityRegistry;
 	}
 
 } // namespace aby::eng

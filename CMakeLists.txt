@@ -8,8 +8,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-
-
 set(VENDOR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor)
 
 # add this before aby-win so that glfw doesnt create an uninstall target
@@ -33,6 +31,7 @@ add_subdirectory(${VENDOR_DIR}/freetype)
 
 add_subdirectory(${VENDOR_DIR}/argparse)
 
+add_subdirectory(${VENDOR_DIR}/entt)
 
 set_target_properties(glfw PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"

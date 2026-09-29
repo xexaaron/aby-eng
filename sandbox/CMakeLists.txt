@@ -9,10 +9,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIGURATION>)
 
 add_executable(${PROJECT_NAME}
     include/main.hpp
-    include/moving_quad.hpp
-    
     src/main.cpp
-    src/moving_quad.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)

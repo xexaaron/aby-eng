@@ -7,14 +7,14 @@
 namespace aby::eng {
 
 	/**
-     * @brief Define your entry point class and then in your main function call EntryPoint::set<MyEntryClass>(...); 
+     * @brief Define your entry point class and then in your main function call EntryPoint::exec<MyEntryClass>(...); 
      */
 	class ABY_API EntryPoint {
 	public:
 		EntryPoint(const AppInfo& app_info);
 
 		/**
-		* @brief Set the global entry point
+		* @brief Execute the global entry point
 		* @tparam EntryPoint derived class
 		* @param argc the argument count supplied by the main function
 		* @param argv the arguments supplied by the main function
@@ -22,7 +22,7 @@ namespace aby::eng {
 		*/
 		template <typename T>
 		requires(std::derived_from<T, EntryPoint>)
-		static auto set(i32 argc, char** argv) -> i32 {
+		static auto exec(i32 argc, char** argv) -> i32 {
 			m_EntryPoint = std::make_shared<T>(argc, argv);
 			return m_EntryPoint->init(argc, argv);
 		}

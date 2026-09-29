@@ -4,11 +4,18 @@
 
 #include <aby-rhi/aby-rhi.hpp>
 #include <aby-win/window.hpp>
+#include <entt/entt.hpp>
 #include <optional>
 #include <string>
 #include <vector>
 
 namespace aby::eng {
+
+	namespace ecs {
+
+		class Entity;
+
+	}
 
 	struct AppInfo {
 		std::string name    = "";
@@ -32,9 +39,7 @@ namespace aby::eng {
 	public:
 		static auto run() -> void;
 		static auto exit() -> void;
-
 		static auto window() -> win::Window*;
-		static auto add_obj(ref<Object> object) -> void;
 	protected:
 		App(const AppInfo& info);
 	private:
@@ -43,11 +48,29 @@ namespace aby::eng {
 		static auto parse_args(const AppInfo& info) -> EngineArgs;
 		friend class EntryPoint;
 	private:
+		static auto add_obj(ref<Object> object) -> void;
+		template <typename T, typename... Args>
+		requires(CObject<T>)
+		friend auto create(Args&&... args) -> ref<T>;
+	private:
+		static auto entity_registry() -> entt::registry&;
+		static auto add_entity(entt::entity entity) -> void;
+		friend class ecs::Entity;
+	private:
 		static inline unique<win::Window> m_Window = nullptr;
 		static inline rhi::Context* m_Context      = nullptr;
 		static inline std::vector<ref<Object>> m_Objects;
 		static inline EAppState m_State = EAppState::init;
+		static inline entt::registry m_EntityRegistry;
 	};
+
+	template <typename T, typename... Args>
+	requires(CObject<T>)
+	static auto create(Args&&... args) -> ref<T> {
+		ref<T> obj = T::create(std::forward<Args>(args)...);
+		App::add_obj(obj);
+		return obj;
+	}
 
 } // namespace aby::eng
 

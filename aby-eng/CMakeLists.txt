@@ -16,13 +16,22 @@ add_library(${PROJECT_NAME} SHARED
     include/aby-eng/core/renderer.hpp
     include/aby-eng/core/object.hpp
     include/aby-eng/core/text.hpp
-    
+
+    include/aby-eng/core/ecs/entity.hpp
+    include/aby-eng/core/ecs/component.hpp
+    include/aby-eng/core/ecs/system.hpp
+    include/aby-eng/core/ecs/components/component.inl
+    include/aby-eng/core/ecs/components/lifecycle-component.hpp
+    include/aby-eng/core/ecs/components/sprite-component.hpp
+    include/aby-eng/core/ecs/components/transform-component.hpp
+    include/aby-eng/core/ecs/systems/lifecycle-system.hpp
+
     include/aby-eng/misc/types.hpp
     include/aby-eng/misc/uuid.hpp
     include/aby-eng/misc/time.hpp
     include/aby-eng/misc/font.hpp
     include/aby-eng/misc/utf8.hpp
-
+    
     src/common.cpp
     src/log.cpp
     
@@ -32,6 +41,10 @@ add_library(${PROJECT_NAME} SHARED
     src/core/object.cpp
     src/core/text.cpp
     
+    src/core/ecs/entity.cpp
+    src/core/ecs/system.cpp
+    src/core/ecs/systems/lifecycle-system.cpp
+
     src/misc/types.cpp
     src/misc/uuid.cpp
     src/misc/time.cpp
@@ -45,6 +58,7 @@ target_include_directories(${PROJECT_NAME}
 PUBLIC
     include/
     include/aby-eng
+    ../vendor/entt/src
 PRIVATE
 )
 

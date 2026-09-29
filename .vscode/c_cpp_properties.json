@@ -50,6 +50,7 @@
                 "${workspaceFolder}/vendor/aby-win/aby-win/include/aby-win",
                 "${workspaceFolder}/vendor/aby-win/vendor/SDL/include",
                 "${workspaceFolder}/vendor/aby-win/vendor/glfw/include",
+                "${worksapceFolder}/vendor/entt/src",
                 "${workspaceFolder}/vendor/glm",
                 "${workspaceFolder}/vendor/tbb/include",
                 "${workspaceFolder}/vendor/tbb/include/oneapi"
