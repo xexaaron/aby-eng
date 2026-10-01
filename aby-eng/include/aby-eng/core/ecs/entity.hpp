@@ -11,29 +11,32 @@
 
 namespace aby::eng::ecs {
 
+	/**
+	* An extremely lightweight entity class represnting a unique identifier
+	*/
 	class Entity {
 	public:
 		/**
-		* @brief Create a new entity and register it
+		* Create a new entity and register it
 		*/
 		Entity();
 		/**
-		* @brief Only used for copying the id of an entity
+		* Only used for copying the id of an entity
 		*/
 		Entity(entt::entity id);
 		/**
-		* @brief Only used for copying the id of an entity
+		* Only used for copying the id of an entity
 		*/
 		Entity(const Entity& other);
 		/**
-		* @brief Sets the moved from entities id to entt::null
+		* Sets the moved from entities id to entt::null
 		*/
 		Entity(Entity&& other);
 
 		/**
-		* @brief Attach a component to an entity
+		* Attach a component to an entity
 		* @tparam T the component type
-		* @param component a component
+		* @param[in] component a component
 		* @return the new component 
 		*/
 		template <typename T>
@@ -41,7 +44,7 @@ namespace aby::eng::ecs {
 		auto add(const T& component) -> T&;
 
 		/**
-		* @brief Attach a component to an entity
+		* Attach a component to an entity
 		* @tparam T default constructible component type
 		* @return the new component
 		*/
@@ -50,10 +53,10 @@ namespace aby::eng::ecs {
 		auto add() -> T&;
 
 		/**
-		* @brief Attach a component to an entity
+		* Attach a component to an entity
 		* @tparam T the component type
 		* @tparam Args the component constructor arg types
-		* @param args the component constructor args
+		* @param[in] args the component constructor args
 		* @return the new component
 		*/
 		template <typename T, typename... Args>
@@ -61,7 +64,7 @@ namespace aby::eng::ecs {
 		auto emplace(Args&&... args) -> T&;
 
 		/**
-		* @brief Check if the entity has this component(s)
+		* Check if the entity has this component(s)
 		* @tparam ...Ts the component type(s)
 		*/
 		template <typename... Ts>
@@ -69,7 +72,7 @@ namespace aby::eng::ecs {
 		auto has() const -> bool;
 
 		/**
-		* @brief Get the component(s) belonging to this entity.
+		* Get the component(s) belonging to this entity.
 		* @tparam Ts The component type(s).
 		* @return T& for a single component, or std::tuple<Ts&...> for multiple components.
 		*/
@@ -78,7 +81,7 @@ namespace aby::eng::ecs {
 		auto get() const -> std::conditional_t<sizeof...(Ts) == 1, std::tuple_element_t<0, std::tuple<Ts...>>&, std::tuple<Ts&...>>;
 
 		/**
-		* @brief Create a new entity and copy all of its component
+		* Create a new entity and copy all of its component
 		*/
 		auto clone() const -> Entity;
 

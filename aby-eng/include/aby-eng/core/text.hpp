@@ -9,7 +9,7 @@
 
 namespace aby::eng {
 
-	/// @brief UTF-8 aware text class
+	/// UTF-8 aware text class
 	class ABY_API Text {
 	public:
 		explicit Text(const std::string& data);

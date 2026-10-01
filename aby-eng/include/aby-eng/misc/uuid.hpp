@@ -6,14 +6,15 @@
 
 namespace aby::eng {
 
+	/// Unique identifier generator
 	class ABY_API UUID {
 	public:
-		/// @brief Generate a valid uuid
+		/// Generate a valid uuid
 		UUID();
-		/// @brief Generate an invalid uuid
+		/// Generate an invalid uuid
 		constexpr UUID(std::nullopt_t) : m_Value(0) {
 		}
-		/// @brief Generate an invalid uuid
+		/// Generate an invalid uuid
 		constexpr UUID(std::nullptr_t) : m_Value(0) {
 		}
 		~UUID() = default;

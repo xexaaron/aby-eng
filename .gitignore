@@ -1,2 +1,4 @@
 bin/
 notes/
+site/
+.venv/

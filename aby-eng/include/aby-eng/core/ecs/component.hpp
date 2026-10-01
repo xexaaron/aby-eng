@@ -13,19 +13,27 @@
 
 namespace aby::eng::ecs {
 
+	/**
+	* Base component class that every component should inherit from.
+	* Descries the static interface that all components should implement.
+	*/
 	struct Component {
 		using type_list = detail::ComponentList;
 
 		/**
-        * @brief Get the class name of a component
-        * @note Every component must have this static function defined.
+        * Get the class name of a component
+        * @note
+		*
+		* 	 Every component must have this static function defined.
         */
 		static auto name() -> std::string_view {
 			return "Component";
 		}
 		/**
-        * @brief Check if the component should be hidden from tree and property views
-        * @note Every component must have this static function defined
+        * Check if the component should be hidden from tree and property views
+        * @note
+		*
+		* 	 Every component must have this static function defined
         */
 		static auto hidden() -> bool {
 			return true;

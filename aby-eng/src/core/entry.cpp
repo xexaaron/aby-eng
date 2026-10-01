@@ -74,4 +74,10 @@ namespace aby::eng {
 	auto EntryPoint::on_create() -> void {
 	}
 
+	auto EntryPoint::on_exec() -> void {
+	}
+
+	auto EntryPoint::on_exit() -> void {
+	}
+
 } // namespace aby::eng

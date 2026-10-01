@@ -11,6 +11,13 @@
 #	include <cxxabi.h>
 #endif
 
+/**
+* Defines the meta structure for a component containing properties
+* @param ... The member variable names. ie. 
+* @note
+*	
+* 	 Usage: ``` struct foo { property<...> x = ...; ABY_ENG_PROPERTIES(x); }; ```
+*/
 #define ABY_ENG_PROPERTIES(...)                                                      \
 public:                                                                              \
 	friend struct meta;                                                              \
@@ -124,6 +131,12 @@ namespace aby::eng::ecs {
 
 	} // namespace detail
 
+	/**
+	* A component property structure that wraps a type
+	* @tparam DisplayName a string literal name used to display the property in the editor
+	* @tparam T the type of object to wrap
+	* @tparam Access determined if the property can be changed in the editor
+	*/
 	template <meta::fixed_string DisplayName, typename T, EProperty Access>
 	struct property : detail::component_property<std::remove_cvref_t<decltype(std::declval<T>())>> {
 		using type = std::remove_cvref_t<decltype(std::declval<T>())>;
@@ -136,24 +149,40 @@ namespace aby::eng::ecs {
 		constexpr property(Args&&... args) : base(args...) {
 		}
 
+		/**
+		* Get the property value
+		*/
 		auto value() const -> const base& {
 			return *this;
 		}
 
+		/**
+		* Get the property value
+		*/
 		auto value() -> base& {
 			return *this;
 		}
 
+		/**
+		* The property's meta information
+		*/
 		struct meta {
+			/**
+			* Get the display name for the property
+			*/
 			static constexpr auto name() -> std::string_view {
 				return DisplayName.value;
 			}
-
+			/**
+			* Get the access qualifier for the property
+			*/
 			static constexpr auto access() -> EProperty {
 				return Access;
 			}
-
 #if defined(__clang__) || defined(__GNUC__)
+			/**
+			* Get the demangled type name of the property's wrapped type
+			*/
 			static auto type_name() -> std::string {
 				static auto demangle = [](const char* name) -> std::string {
 					int status = 0;
@@ -169,43 +198,20 @@ namespace aby::eng::ecs {
 				return demangle(typeid(T).name());
 			}
 #else
+			/**
+			* Get the type name of the property's wrapped type
+			*/
 			static constexpr auto type_name() -> std::string_view {
 				return typeid(T).name();
 			}
 #endif
-
+			/**
+			* Get the type info of the property's wrapped type
+			*/
 			static constexpr auto type() -> const std::type_info& {
 				return typeid(T);
 			}
 		};
-	};
-
-	template <auto... Properties>
-	struct properties {
-	public:
-		friend struct meta;
-	private:
-		using internal_property_type_list = decltype(::aby::eng::meta::type_list{ Properties... });
-	public:
-		struct meta {
-			using property_type_list = typename internal_property_type_list::template transform<std::remove_cvref_t>;
-			using type_list          = typename property_type_list::template transform<::aby::eng::meta::internal_type>;
-		};
-
-		template <typename Property>
-		constexpr auto get() -> Property& {
-			Property* result = nullptr;
-
-			([&] {
-				using T = std::remove_cvref_t<decltype(Properties)>;
-
-				if constexpr (std::is_same_v<T, Property>) {
-					result = &Properties;
-				}
-			}(), ...);
-
-			return *result;
-		}
 	};
 
 } // namespace aby::eng::ecs

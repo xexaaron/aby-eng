@@ -1,0 +1,106 @@
+site_name: Abyss Engine
+site_description: Abyss Engine documentation
+site_author: xexaaron
+
+repo_url: https://github.com/xexaaron/aby-eng
+docs_dir: source
+site_dir: site
+
+nav:
+  - Home: index.md
+  - Introduction:
+      - Requirements: introduction/requirements.md
+      - Getting Started: introduction/getting-started.md
+      - Quick Start: introduction/quick-start.md
+  - API Reference: 
+    - Macros: api-ref/
+    - aby::eng: api-ref/aby/eng/
+    - aby::eng::ecs: api-ref/aby/eng/ecs/
+    - aby::eng::meta: api-ref/aby/eng/meta/
+    - aby::eng::utf8: api-ref/aby/eng/utf8/
+    
+theme:
+  name: material
+
+  palette:
+      - scheme: slate
+        toggle:
+          icon: material/weather-sunny
+          name: Switch to light mode
+
+      - scheme: default
+        toggle:
+          icon: material/weather-night
+          name: Switch to dark mode
+
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+
+    - search.suggest
+    - search.highlight
+    - search.share
+
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+  - pymdownx.details
+
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.superfences
+
+  - pymdownx.tabbed:
+      alternate_style: true
+
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+  - pymdownx.tilde
+
+plugins:
+  - search
+
+extra_css:
+  - ../stylesheets/extra.css
+  - ../../api-ref/stylesheets/doxide.css
+
+extra_javascript:
+  - ../../api-ref/javascripts/extra.js
+  - ../../api-ref/javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - https://cdn.jsdelivr.net/npm/tablesort@5.3.0/src/tablesort.min.js
+  - https://cdn.jsdelivr.net/npm/tablesort@5.3.0/src/sorts/tablesort.number.js
+  - ../../api-ref/javascripts/tablesort.js
+
+copyright: Copyright &copy; 2026 xexaaron

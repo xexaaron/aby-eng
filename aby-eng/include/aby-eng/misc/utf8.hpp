@@ -11,8 +11,10 @@
 
 namespace aby::eng::utf8 {
 
-	/// @brief A 32 bit utf-8 codepoint class to 'ensure' operations from the utf8 namespace are used
-	///		   on codepoints instead of the standard library functions
+	/** 
+	*   A 32 bit utf-8 codepoint class to 'ensure' operations from the utf8 namespace are used
+	*   on codepoints instead of the standard library functions
+	*/
 	enum class codepoint : char32_t {
 		// sentinels
 		min         = 0,          // lowest possible value
@@ -62,31 +64,31 @@ namespace aby::eng::utf8 {
 	};
 
 	/**
-    * @brief Convienence function to iterate codepoints
+    * Convienence function to iterate codepoints
     * @param string The string to get the codepoints from
     * @return Codepoints(string)
     */
 	auto codepoints(std::string_view string) -> Codepoints;
 	/**
-	* @brief encode a codepoint into a string
+	* encode a codepoint into a string
 	* @param cp utf8 codepoint
 	* @return encoded std::string
 	*/
 	auto encode(codepoint cp) -> std::string;
 	/**
-	* @brief encode a list of codepoints into a string
+	* encode a list of codepoints into a string
 	* @param cps utf8 codepoints
 	* @return encoded std::string
 	*/
 	auto encode(std::span<const codepoint> cps) -> std::string;
 	/**
-	* @brief encode a codepoint into a string
+	* encode a codepoint into a string
 	* @param str string to append to
 	* @param cp utf8 codepoint
 	*/
 	auto encode(std::string& str, codepoint cp) -> void;
 	/**
-	* @brief encode a list of codepoints into a string
+	* encode a list of codepoints into a string
 	* @param str string to append to
 	* @param cps utf8 codepoints
 	*/
@@ -95,12 +97,12 @@ namespace aby::eng::utf8 {
 	// TODO: Make the api implement to_lower and to_upper for non-ascii characters
 
 	/**
-	* @brief Get the lowercase version of an ascii character that is utf8 encoded
+	* Get the lowercase version of an ascii character that is utf8 encoded
 	* @return lowercase utf8::codepoint
 	*/
 	auto to_lower(utf8::codepoint cp) -> utf8::codepoint;
 	/**
-	* @brief Get the uppercase version of an ascii character that is utf8 encoded
+	* Get the uppercase version of an ascii character that is utf8 encoded
 	* @return uppercase utf8::codepoint
 	*/
 	auto to_upper(utf8::codepoint cp) -> utf8::codepoint;

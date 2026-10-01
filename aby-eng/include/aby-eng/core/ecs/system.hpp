@@ -6,12 +6,15 @@
 
 namespace aby::eng::ecs {
 
+	/**
+	* The base system class that all systems should inherit from
+	*/
 	class System : public Object {
 		ABY_OBJECT_CLASS(System);
 	protected:
 		System(entt::registry& registry);
 
-		/// @brief Systems are not allowed to use @c on_render
+		/// Systems are not allowed to use @c on_render
 		auto on_render() -> void final override;
 	protected:
 		entt::registry* m_Registry;

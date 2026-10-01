@@ -1,0 +1,20 @@
+title: Abyss Engine
+description: API reference for Abyss Engine
+
+files:
+  - "../include/*.hpp"
+  - "../include/**/*.hpp"
+  - "../include/*.h"
+  - "../include/**/*.h"
+  - "../include/*.inl"
+  - "../include/**/*.inl"
+  
+output: source/api-ref
+
+defines:
+  ABY_API:
+  ABY_ENG_COMPONENT(string, ...):
+  ABY_ENG_PROPERTIES(...): 
+  ABY_ENG_COMPONENT_HIDE: 
+  ABY_ENG_COMPONENT_SHOW:
+  __LOC_FN_SEP_WIDTH__: '"70"'

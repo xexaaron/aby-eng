@@ -10,44 +10,51 @@
 
 namespace aby::eng {
 
+	/// Two dimensional rendering interface
 	class ABY_API Renderer2D {
 	public:
 		/**
-		 * @brief Upload a quad to be renderered
+		 * Upload a quad to be renderered
 		 * @param transform The quad transform in pixel coordinates
 		 * @param material The rendering material style
 		 */
 		static auto quad(const Transform2D& transform, const Material2D& material = Material2D()) -> void;
 		/**
-		* @brief Upload a string of text to be rendered as glyphs via the fonts glyph map
+		* Upload a string of text to be rendered as glyphs via the fonts glyph map
 		* @param pos the position: (0, 0) -> top left. (the text is positioned from its top left corner as well).
 		* @param font a resource pointer to a loaded font object
 		* @param text text and styling
-		* @note newlines will put the text on the next line height of space
+		* @note
+		*
+		* 	 newlines will put the text on the next line height of space
 		*/
 		static auto text(const glm::fvec2& pos, FontPtr font, const Text2D& text) -> void;
 		/**
-		* @brief Upload a string of formattable text to be rendered as glyphs via the fonts glyph map
+		* Upload a string of formattable text to be rendered as glyphs via the fonts glyph map
 		* @param pos the position: (0, 0) -> top left. (the text is positioned from its top left corner as well).
 		* @param text text and styling
 		* @todo more robust text formatting
-		* @note format protocol: ansi esc codes & <col:#RRGGBB></col> tags (currently)
+		* @note 
+		*
+		* 	 format protocol: ansi esc codes & <col:#RRGGBB></col> tags (currently)
 		*/
 		static auto textf(const glm::fvec2& pos, FontPtr font, const Text2D& text) -> void;
 		/**
-		* @brief Submit a draw cmd to the renderers render pass
+		* Submit a draw cmd to the renderers render pass
 		* @param cmd the rhi draw cmd to upload.
-		* @note copies the draw command but the vertex & index buffers remain the same.
-		* 		this allows for a draw command to be reused but change its user data
+		* @note
+		*
+		* 	copies the draw command but the vertex & index buffers remain the same.
+		*   this allows for a draw command to be reused but change its user data
 		*/
 		static auto submit(const rhi::DrawCmd& cmd) -> void;
 		/**
-		* @brief Set the scissor flag
+		* Set the scissor flag
 		* @param enable [true | false]
 		*/
 		static auto enable_scissor(bool enable) -> void;
 		/**
-		* @brief Set the scissor region
+		* Set the scissor region
 		* @param min The min coords of the rectangle
 		* @param max The max coords of the rectangle
 		*/

@@ -7,11 +7,20 @@
 #include <string_view>
 #include <typeinfo>
 
+/**
+* When defining a component this can make it more clearer than [true|false] that
+* a component should be hidden from the tree view
+*/
 #define ABY_ENG_COMPONENT_HIDE true
+
+/**
+* When defining a component this can make it more clearer than [true|false] that
+* a component should be shown in the tree view
+*/
 #define ABY_ENG_COMPONENT_SHOW false
 
 /**
-* @brief Define common component functions
+* Define common component functions
 * @param Name the class name of the component
 * @param Hidden the tree/property visibility of the component
 */

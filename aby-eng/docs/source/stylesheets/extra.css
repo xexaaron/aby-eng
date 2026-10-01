@@ -1,0 +1,61 @@
+.md-header {
+    background:
+        radial-gradient(
+            ellipse at 50% -30%,
+            rgba(139, 92, 246, 0.35) 0%,
+            rgba(91, 33, 182, 0.18) 35%,
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            #241333 0%,
+            #170d24 55%,
+            #100a18 100%
+        );
+
+    box-shadow:
+        0 1px 0 rgba(216, 180, 254, 0.08),
+        0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+.md-footer-meta {
+    background:
+        radial-gradient(
+            ellipse at 50% 130%,
+            rgba(139, 92, 246, 0.35) 0%,
+            rgba(91, 33, 182, 0.18) 35%,
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            #100a18 0%,
+            #170d24 45%,
+            #241333 100%
+        );
+
+    box-shadow:
+        0 -1px 0 rgba(216, 180, 254, 0.08),
+        0 -4px 18px rgba(0, 0, 0, 0.35);
+}
+
+[data-md-color-scheme="slate"] {
+    --md-default-bg-color: #111214;
+}
+
+/* blend footer to body and body to header */
+[data-md-color-scheme="slate"] .md-main {
+    background:
+        linear-gradient(
+            180deg,
+            #100a18 0%,
+            #17151a 12%,
+            #1d1d20 30%,
+            #18191c 60%,
+            #111214 93%,
+            #151119 99.5%,
+            #241333 100%
+        );
+}
+[data-md-color-scheme="slate"] .md-content {
+    background: transparent;
+}

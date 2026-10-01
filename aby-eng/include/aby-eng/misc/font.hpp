@@ -39,16 +39,25 @@ namespace aby::eng {
 		float mono_advance = 0.f;
 	};
 
+	/**
+	* Font class for loading local or system fonts 
+	* and storing them as renderable glyphs with caching.
+	*/
 	class Font {
 	public:
 		/**
-        * @brief Font creation function
+        * Font creation function
         * @param rel_path Path relative to cwd/system font folder
         * @param system Is the font contained by the system
-		* @note system fonts: 
-		* 		linux:/usr/share/fonts/TTF,
-		* 		win32:C:/Windows/Fonts,
-		*  		macos:/System/Library/Fonts
+		* @note
+		*	 
+		* 	 For system fonts the paths are:
+		*
+		* 	 Linux: `/usr/share/fonts/TTF`
+		*
+		* 	 Win32: `C:\\Windows\\Fonts`
+		*
+		* 	 macOS: `/System/Library/Fonts`
         */
 		static auto create(const fs::path& rel_path, float px_size = 12.f, bool system = false) -> FontPtr;
 		~Font();

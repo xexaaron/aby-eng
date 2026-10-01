@@ -5,19 +5,30 @@
 
 namespace aby::eng {
 
-	/// @brief Time class mainly used for deltatime with easy conversion functions
-	/// @note  formatter {:ms} (milli) {:s} (sec) {:ns} (nano) {:us} (micro)
-	// 		   calls function then uses suffix ms, s, ns, μs
+	/** 
+	* Time class mainly used for deltatime with easy conversion functions
+	* @note
+	*
+	* 	 formatter {:ms} (milli) {:s} (sec) {:ns} (nano) {:us} (micro) calls function then uses suffix ms, s, ns, μs
+	*/
 	class ABY_API Time {
 	public:
+		/// Construct from milliseconds
 		explicit Time(std::chrono::milliseconds ms);
+		/// Construct from seconds
 		explicit Time(std::chrono::seconds s);
+		/// Construct from nanoseconds
 		explicit Time(std::chrono::nanoseconds s);
+		/// Construct from microseconds
 		explicit Time(std::chrono::microseconds s);
 
+		/// Convert to milliseconds
 		auto milli() const -> float;
+		/// Convert to seconds
 		auto sec() const -> float;
+		/// Convert to nanoseconds
 		auto nano() const -> float;
+		/// Convert to microseconds
 		auto micro() const -> float;
 	private:
 		std::chrono::nanoseconds m_Nanoseconds;

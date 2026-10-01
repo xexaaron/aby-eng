@@ -22,3 +22,6 @@
 [submodule "vendor/entt"]
 	path = vendor/entt
 	url = https://github.com/skypjack/entt
+[submodule "vendor/doxide"]
+	path = vendor/doxide
+	url = https://github.com/lawmurray/doxide
